@@ -590,7 +590,7 @@ struct pmenu *pmenu_init(struct cui *cui, unsigned int item_count,
 		return NULL;
 	}
 
-	nc_scr_init(&menu->scr, pb_screen_sig, 0, cui, pmenu_process_key,
+	nc_scr_init(&menu->scr, pb_screen_sig, 0, cui, menu, pmenu_process_key,
 		pmenu_post, pmenu_unpost, pmenu_resize);
 
 	menu->sig = pb_pmenu_sig;

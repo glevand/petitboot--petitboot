@@ -139,6 +139,7 @@ static inline struct cui *cui_from_scr(struct nc_scr *scr)
 
 static inline struct cui *cui_from_pmenu(struct pmenu *menu)
 {
+	assert(menu);
 	assert(menu->sig == pb_pmenu_sig);
 	return menu->scr.cui;
 }

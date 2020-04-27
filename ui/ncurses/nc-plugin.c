@@ -396,7 +396,7 @@ struct plugin_screen *plugin_screen_init(struct cui *cui,
 	talloc_set_destructor(screen, plugin_screen_destroy);
 
 	nc_scr_init(&screen->scr, pb_plugin_screen_sig, 0,
-			cui, plugin_screen_process_key,
+			cui, NULL, plugin_screen_process_key,
 			plugin_screen_post, plugin_screen_unpost,
 			plugin_screen_resize);
 

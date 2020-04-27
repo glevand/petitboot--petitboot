@@ -208,7 +208,7 @@ void text_screen_init(struct text_screen *screen, struct cui *cui,
 		const char *title, void (*on_exit)(struct cui *))
 {
 	nc_scr_init(&screen->scr, pb_text_screen_sig, 0,
-			cui, text_screen_process_key,
+			cui, NULL, text_screen_process_key,
 			text_screen_post, NULL, text_screen_resize);
 
 	/* this will establish our array of lines */

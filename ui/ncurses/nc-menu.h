@@ -108,13 +108,10 @@ int pmenu_exit_cb(struct pmenu_item *item);
 
 static inline struct pmenu *pmenu_from_scr(struct nc_scr *scr)
 {
-	struct pmenu *pmenu;
+	struct pmenu *const pmenu = scr->pmenu;
 
 	assert(scr_sig_check(scr->sig));
-
-	pmenu = (struct pmenu *)((char *)scr
-		- (size_t)&((struct pmenu *)0)->scr);
-
+	assert(pmenu);
 	assert(pmenu->sig == pb_pmenu_sig);
 	assert(scr_sig_check(pmenu->scr.sig));
 
