@@ -41,6 +41,7 @@
 
 enum pb_nc_sig {
 	pb_cui_sig		= 111,
+	pb_cui_opt_data_sig,
 	pb_pmenu_sig		= 222,
 	pb_item_sig		= 333,
 

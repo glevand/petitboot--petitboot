@@ -70,11 +70,6 @@ static inline struct pmenu_item *pmenu_item_from_arg(void *arg)
 	return item;
 }
 
-static inline struct cui_opt_data *cod_from_item(struct pmenu_item *item)
-{
-	return item->data;
-}
-
 typedef int (*hot_key_fn)(struct pmenu *menu, struct pmenu_item *item, int c);
 
 int pmenu_main_hot_keys(struct pmenu *menu, struct pmenu_item *item, int c);
