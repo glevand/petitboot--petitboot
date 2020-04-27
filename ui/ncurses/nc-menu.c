@@ -383,16 +383,16 @@ int pmenu_main_hot_keys(struct pmenu *menu, struct pmenu_item *item, int c)
 
 	switch (c) {
 	case 'i':
-		cui_show_sysinfo(cui_from_arg(scr->ui_ctx));
+		cui_show_sysinfo(cui_from_scr(scr));
 		break;
 	case 'c':
-		cui_show_config(cui_from_arg(scr->ui_ctx));
+		cui_show_config(cui_from_scr(scr));
 		break;
 	case 'l':
-		cui_show_lang(cui_from_arg(scr->ui_ctx));
+		cui_show_lang(cui_from_scr(scr));
 		break;
 	case 'g':
-		cui_show_statuslog(cui_from_arg(scr->ui_ctx));
+		cui_show_statuslog(cui_from_scr(scr));
 		break;
 	default:
 		return 0;
@@ -468,7 +468,7 @@ static void pmenu_process_key(struct nc_scr *scr, int key)
 	case KEY_F(1):
 	case 'h':
 		if (menu->help_text)
-			cui_show_help(cui_from_arg(scr->ui_ctx),
+			cui_show_help(cui_from_scr(scr),
 					menu->help_title, menu->help_text);
 		break;
 	default:

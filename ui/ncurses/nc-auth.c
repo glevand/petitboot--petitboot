@@ -287,7 +287,7 @@ struct auth_screen *auth_screen_init(struct cui *cui,
 	 */
 	scr = &screen->scr;
 	scr->sig = pb_auth_screen_sig;
-	scr->ui_ctx = cui;
+	scr->cui = cui;
 	scr->process_key = auth_screen_process_key;
 	scr->post = auth_screen_post;
 	scr->unpost = auth_screen_unpost;
