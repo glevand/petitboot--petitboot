@@ -427,7 +427,7 @@ struct lang_screen *lang_screen_init(struct cui *cui,
 	screen = talloc_zero(cui, struct lang_screen);
 	talloc_set_destructor(screen, lang_screen_destroy);
 	nc_scr_init(&screen->scr, pb_lang_screen_sig, 0,
-			cui, lang_screen_process_key,
+			cui, NULL, lang_screen_process_key,
 			lang_screen_post, lang_screen_unpost,
 			lang_screen_resize);
 

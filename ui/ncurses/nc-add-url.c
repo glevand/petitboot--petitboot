@@ -298,7 +298,7 @@ struct add_url_screen *add_url_screen_init(struct cui *cui,
 	screen->need_redraw = false;
 
 	nc_scr_init(&screen->scr, pb_add_url_screen_sig, 0,
-		cui, add_url_screen_process_key,
+		cui, NULL, add_url_screen_process_key,
 		add_url_screen_post, add_url_screen_unpost,
 		NULL);
 

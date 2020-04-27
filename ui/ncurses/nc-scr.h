@@ -148,6 +148,7 @@ struct nc_frame {
 struct nc_scr {
 	enum pb_nc_sig sig;
 	struct cui *cui;
+	struct pmenu *pmenu;
 	struct nc_frame frame;
 	WINDOW *main_ncw;
 	WINDOW *sub_ncw;
@@ -159,6 +160,7 @@ struct nc_scr {
 
 int nc_scr_init(struct nc_scr *scr, enum pb_nc_sig sig, int begin_x,
 	struct cui *cui,
+	struct pmenu *pmenu,
 	void (*process_key)(struct nc_scr *, int),
 	int (*post)(struct nc_scr *),
 	int (*unpost)(struct nc_scr *),

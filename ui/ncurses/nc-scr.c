@@ -116,6 +116,7 @@ void nc_scr_status_printf(struct nc_scr *scr, const char *format, ...)
 
 int nc_scr_init(struct nc_scr *scr, enum pb_nc_sig sig, int begin_x,
 	struct cui *cui,
+	struct pmenu *pmenu,
 	void (*process_key)(struct nc_scr *, int),
 	int (*post)(struct nc_scr *),
 	int (*unpost)(struct nc_scr *),
@@ -123,6 +124,7 @@ int nc_scr_init(struct nc_scr *scr, enum pb_nc_sig sig, int begin_x,
 {
 	scr->sig = sig;
 	scr->cui = cui;
+	scr->pmenu = pmenu;
 	scr->process_key = process_key;
 	scr->post = post;
 	scr->unpost = unpost;

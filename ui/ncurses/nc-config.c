@@ -1380,7 +1380,7 @@ struct config_screen *config_screen_init(struct cui *cui,
 	screen = talloc_zero(cui, struct config_screen);
 	talloc_set_destructor(screen, config_screen_destroy);
 	nc_scr_init(&screen->scr, pb_config_screen_sig, 0,
-			cui, config_screen_process_key,
+			cui, NULL, config_screen_process_key,
 			config_screen_post, config_screen_unpost,
 			config_screen_resize);
 
