@@ -218,7 +218,7 @@ void cui_on_exit(struct pmenu *menu)
 
 	cui_run_cmd(cui, argv);
 
-	nc_scr_status_printf(cui->current, _("Returned from shell"));
+	nc_scr_status_printf(cui->current_scr, _("Returned from shell"));
 }
 
 /**
@@ -249,7 +249,7 @@ int cui_run_cmd(struct cui *cui, const char **cmd_argv)
 	process->argv = cmd_argv;
 	process->raw_stdout = true;
 
-	nc_scr_status_printf(cui->current, _("Running %s..."), cmd_argv[0]);
+	nc_scr_status_printf(cui->current_scr, _("Running %s..."), cmd_argv[0]);
 
 	def_prog_mode();
 	clear();
@@ -261,12 +261,12 @@ int cui_run_cmd(struct cui *cui, const char **cmd_argv)
 	reset_prog_mode();
 	refresh();
 
-	redrawwin(cui->current->main_ncw);
-	nc_scr_post(cui->current);
+	redrawwin(cui->current_scr->main_ncw);
+	nc_scr_post(cui->current_scr);
 
 	if (result) {
 		pb_log_fn("failed: '%s'\n", cmd_argv[0]);
-		nc_scr_status_printf(cui->current, _("Failed: %s"),
+		nc_scr_status_printf(cui->current_scr, _("Failed: %s"),
 				cmd_argv[0]);
 	}
 
@@ -293,16 +293,16 @@ static int cui_boot(struct pmenu_item *item)
 	struct cui *cui = cui_from_item(item);
 	struct cui_opt_data *cod = cod_from_item(item);
 
-	assert(cui->current == &cui->main->scr);
+	assert(cui->current_scr == &cui->main->scr);
 
 	pb_debug("%s: %s\n", __func__, cod->name);
 
-	nc_scr_status_printf(cui->current, _("Booting %s..."), cod->name);
+	nc_scr_status_printf(cui->current_scr, _("Booting %s..."), cod->name);
 
 	result = discover_client_boot(cui->client, NULL, cod->opt, cod->bd);
 
 	if (result) {
-		nc_scr_status_printf(cui->current,
+		nc_scr_status_printf(cui->current_scr,
 				_("Failed: boot %s"), cod->bd->image);
 	}
 
@@ -353,13 +353,13 @@ static int menu_reinit_execute(struct pmenu_item *item)
 		return 0;
 	}
 
-	if (!cui->current)
+	if (!cui->current_scr)
 		return 0;
 
 	if (cui->auth_screen)
 		return 0;
 
-	cui->auth_screen = auth_screen_init(cui, cui->current->main_ncw,
+	cui->auth_screen = auth_screen_init(cui, cui->current_scr->main_ncw,
 			false, NULL, menu_reinit_cb, cui_auth_exit);
 
 	if (cui->auth_screen)
@@ -538,10 +538,10 @@ static int cui_install_plugin(struct pmenu_item *item)
 
 	if (rc) {
 		pb_log("cui_send_plugin_install failed!\n");
-		nc_scr_status_printf(cui->current,
+		nc_scr_status_printf(cui->current_scr,
 				_("Failed to send install request"));
 	} else {
-		nc_scr_status_printf(cui->current, _("Installing plugin %s"),
+		nc_scr_status_printf(cui->current_scr, _("Installing plugin %s"),
 				cod->pd->plugin_file);
 		pb_debug("cui_send_plugin_install sent!\n");
 	}
@@ -674,13 +674,13 @@ static void cui_help_exit(struct cui *cui)
 void cui_show_help(struct cui *cui, const char *title,
 		const struct help_text *text)
 {
-	if (!cui->current)
+	if (!cui->current_scr)
 		return;
 
 	if (cui->help_screen)
 		return;
 
-	cui->help_screen = help_screen_init(cui, cui->current,
+	cui->help_screen = help_screen_init(cui, cui->current_scr,
 			title, text, cui_help_exit);
 
 	if (cui->help_screen)
@@ -697,13 +697,13 @@ static void cui_subset_exit(struct cui *cui)
 void cui_show_subset(struct cui *cui, const char *title,
 		     void *arg)
 {
-	if (!cui->current)
+	if (!cui->current_scr)
 		return;
 
 	if (cui->subset_screen)
 		return;
 
-	cui->subset_screen = subset_screen_init(cui, cui->current,
+	cui->subset_screen = subset_screen_init(cui, cui->current_scr,
 			title, arg, cui_subset_exit);
 
 	if (cui->subset_screen)
@@ -719,18 +719,18 @@ static void cui_auth_exit(struct cui *cui)
 	 * before the return_scr posts. If we don't do this operations on the
 	 * main_ncw can cause a blank screen at first (eg. status update).
 	 */
-	nc_scr_unpost(cui->current);
+	nc_scr_unpost(cui->current_scr);
 	talloc_free(cui->auth_screen);
 	cui->auth_screen = NULL;
 
-	cui->current = return_scr;
-	nc_scr_post(cui->current);
+	cui->current_scr = return_scr;
+	nc_scr_post(cui->current_scr);
 }
 
 void cui_show_auth(struct cui *cui, WINDOW *parent, bool set_password,
 		void (*callback)(struct nc_scr *))
 {
-	if (!cui->current)
+	if (!cui->current_scr)
 		return;
 
 	if (cui->auth_screen)
@@ -746,7 +746,7 @@ void cui_show_auth(struct cui *cui, WINDOW *parent, bool set_password,
 void cui_show_open_luks(struct cui *cui, WINDOW *parent,
 		const struct device *dev)
 {
-	if (!cui->current)
+	if (!cui->current_scr)
 		return;
 
 	if (cui->auth_screen)
@@ -766,16 +766,16 @@ struct nc_scr *cui_set_current(struct cui *cui, struct nc_scr *scr)
 {
 	struct nc_scr *old;
 
-	DBGS("%p -> %p\n", cui->current, scr);
+	DBGS("%p -> %p\n", cui->current_scr, scr);
 
-	assert(cui->current != scr);
+	assert(cui->current_scr != scr);
 
-	old = cui->current;
+	old = cui->current_scr;
 	nc_scr_unpost(old);
 
-	cui->current = scr;
+	cui->current_scr = scr;
 
-	nc_scr_post(cui->current);
+	nc_scr_post(cui->current_scr);
 
 	return old;
 }
@@ -809,7 +809,7 @@ static bool process_global_keys(struct cui *cui, int key)
 
 	switch (key) {
 	case 0xc:
-		if (cui->current && cui->current->main_ncw)
+		if (cui->current_scr && cui->current_scr->main_ncw)
 			wrefresh(curscr);
 		return true;
 	}
@@ -837,7 +837,7 @@ int cui_process_key(struct cui *cui)
 	char *sequence;
 	int grab;
 
-	assert(cui->current);
+	assert(cui->current_scr);
 
 	for (;;) {
 		int c = getch();
@@ -891,7 +891,7 @@ int cui_process_key(struct cui *cui)
 		if (process_global_keys(cui, c))
 			continue;
 
-		cui->current->process_key(cui->current, c);
+		cui->current_scr->process_key(cui->current_scr, c);
 	}
 
 	return 0;
@@ -912,14 +912,14 @@ static void cui_handle_resize(struct cui *cui)
 
 	pb_debug("%s: {%u,%u}\n", __func__, ws.ws_row, ws.ws_col);
 
-	wclear(cui->current->main_ncw);
+	wclear(cui->current_scr->main_ncw);
 	resize_term(ws.ws_row, ws.ws_col);
-	cui->current->resize(cui->current);
+	cui->current_scr->resize(cui->current_scr);
 
 	/* For some reason this makes ncurses redraw the screen */
 	getch();
-	redrawwin(cui->current->main_ncw);
-	wrefresh(cui->current->main_ncw);
+	redrawwin(cui->current_scr->main_ncw);
+	wrefresh(cui->current_scr->main_ncw);
 }
 
 /**
@@ -952,10 +952,10 @@ static int cui_boot_option_add(struct device *dev, struct boot_option *opt,
 	selected = current_item(menu->ncm);
 	menu_format(menu->ncm, &rows, &cols);
 
-	if (cui->current == &cui->main->scr)
-		nc_scr_unpost(cui->current);
-	if (plugin_option && cui->current == &cui->plugin_menu->scr)
-		nc_scr_unpost(cui->current);
+	if (cui->current_scr == &cui->main->scr)
+		nc_scr_unpost(cui->current_scr);
+	if (plugin_option && cui->current_scr == &cui->plugin_menu->scr)
+		nc_scr_unpost(cui->current_scr);
 
 	/* Check if the boot device is new */
 	dev_hdr = pmenu_find_device(menu, dev, opt);
@@ -1098,10 +1098,10 @@ static int cui_boot_option_add(struct device *dev, struct boot_option *opt,
 		set_current_item(menu->ncm, selected);
 	}
 
-	if (cui->current == &menu->scr)
-		nc_scr_post(cui->current);
-	if (plugin_option && cui->current == &cui->main->scr)
-		nc_scr_post(cui->current);
+	if (cui->current_scr == &menu->scr)
+		nc_scr_post(cui->current_scr);
+	if (plugin_option && cui->current_scr == &cui->main->scr)
+		nc_scr_post(cui->current_scr);
 
 	return 0;
 }
@@ -1168,8 +1168,8 @@ static int cui_device_add(struct device *dev, void *arg)
 	cod->dev = dev;
 	dev_hdr->data = cod;
 
-	if (cui->current == &cui->main->scr)
-		nc_scr_unpost(cui->current);
+	if (cui->current_scr == &cui->main->scr)
+		nc_scr_unpost(cui->current_scr);
 
 	/* This disconnects items array from menu. */
 	result = set_menu_items(menu->ncm, NULL);
@@ -1207,8 +1207,8 @@ static int cui_device_add(struct device *dev, void *arg)
 		set_current_item(menu->ncm, selected);
 	}
 
-	if (cui->current == &menu->scr)
-		nc_scr_post(cui->current);
+	if (cui->current_scr == &menu->scr)
+		nc_scr_post(cui->current_scr);
 
 	return 0;
 }
@@ -1230,10 +1230,10 @@ static void cui_device_remove(struct device *dev, void *arg)
 
 	pb_log_fn("%p %s\n", dev, dev->id);
 
-	if (cui->current == &cui->main->scr)
-		nc_scr_unpost(cui->current);
-	if (cui->current == &cui->plugin_menu->scr)
-		nc_scr_unpost(cui->current);
+	if (cui->current_scr == &cui->main->scr)
+		nc_scr_unpost(cui->current_scr);
+	if (cui->current_scr == &cui->plugin_menu->scr)
+		nc_scr_unpost(cui->current_scr);
 
 	/* This disconnects items array from menu. */
 
@@ -1309,10 +1309,10 @@ static void cui_device_remove(struct device *dev, void *arg)
 			item_count(cui->main->ncm) + 1);
 	}
 
-	if (cui->current == &cui->main->scr)
-		nc_scr_post(cui->current);
-	if (cui->current == &cui->plugin_menu->scr)
-		nc_scr_post(cui->current);
+	if (cui->current_scr == &cui->main->scr)
+		nc_scr_post(cui->current_scr);
+	if (cui->current_scr == &cui->plugin_menu->scr)
+		nc_scr_post(cui->current_scr);
 }
 
 static void cui_update_status(struct status *status, void *arg)
@@ -1325,7 +1325,7 @@ static void cui_update_status(struct status *status, void *arg)
 	if (status->backlog)
 		return;
 
-	nc_scr_status_printf(cui->current, "%s", status->message);
+	nc_scr_status_printf(cui->current_scr, "%s", status->message);
 
 	if (cui->preboot_mode &&
 		(!status->boot_active || status->type == STATUS_ERROR)) {
@@ -1405,8 +1405,8 @@ fallback:
 	item->on_execute = NULL;
 	item->on_edit = cui_show_plugin;
 
-	if (cui->current == &cui->plugin_menu->scr)
-		nc_scr_unpost(cui->current);
+	if (cui->current_scr == &cui->plugin_menu->scr)
+		nc_scr_unpost(cui->current_scr);
 
 	/* This disconnects items array from menu. */
 	result = set_menu_items(cui->plugin_menu->ncm, NULL);
@@ -1417,8 +1417,8 @@ fallback:
 	/* Re-attach the items array. */
 	result = set_menu_items(cui->plugin_menu->ncm, cui->plugin_menu->items);
 
-	if (cui->current == &cui->plugin_menu->scr)
-		nc_scr_post(cui->current);
+	if (cui->current_scr == &cui->plugin_menu->scr)
+		nc_scr_post(cui->current_scr);
 
 	return result;
 }
@@ -1437,10 +1437,10 @@ static int cui_plugins_remove(void *arg)
 
 	pb_debug("%s\n", __func__);
 
-	if (cui->current == &cui->plugin_menu->scr)
-		nc_scr_unpost(cui->current);
-	if (cui->current == &cui->main->scr)
-		nc_scr_unpost(cui->current);
+	if (cui->current_scr == &cui->plugin_menu->scr)
+		nc_scr_unpost(cui->current_scr);
+	if (cui->current_scr == &cui->main->scr)
+		nc_scr_unpost(cui->current_scr);
 
 	/* This disconnects items array from menu. */
 	set_menu_items(cui->plugin_menu->ncm, NULL);
@@ -1478,12 +1478,12 @@ static int cui_plugins_remove(void *arg)
 
 	set_menu_items(cui->main->ncm, cui->main->items);
 
-	if (cui->current == &cui->main->scr)
-		nc_scr_post(cui->current);
+	if (cui->current_scr == &cui->main->scr)
+		nc_scr_post(cui->current_scr);
 
 	/* If we're currently in a plugin screen jump back to the plugin menu */
 	if (cui->plugin_screen &&
-			cui->current == plugin_screen_scr(cui->plugin_screen))
+			cui->current_scr == plugin_screen_scr(cui->plugin_screen))
 		cui_plugin_exit(cui);
 
 	return 0;
@@ -1500,8 +1500,8 @@ static void cui_update_mm_title(struct cui *cui)
 		frame->rtitle = talloc_asprintf_append(frame->rtitle,
 				" %s", cui->sysinfo->identifier);
 
-	if (cui->current == &cui->main->scr)
-		nc_scr_post(cui->current);
+	if (cui->current_scr == &cui->main->scr)
+		nc_scr_post(cui->current_scr);
 
 	frame = &cui->plugin_menu->scr.frame;
 
@@ -1512,8 +1512,8 @@ static void cui_update_mm_title(struct cui *cui)
 		frame->rtitle = talloc_asprintf_append(frame->rtitle,
 				" %s", cui->sysinfo->identifier);
 
-	if (cui->current == &cui->main->scr)
-		nc_scr_post(cui->current);
+	if (cui->current_scr == &cui->main->scr)
+		nc_scr_post(cui->current_scr);
 }
 
 static void cui_update_sysinfo(struct system_info *sysinfo, void *arg)
@@ -1552,18 +1552,18 @@ void cui_update_language(struct cui *cui, const char *lang)
 	setlocale(LC_ALL, lang);
 
 	/* we'll need to update the menu: drop all items and repopulate */
-	repost_menu = cui->current == &cui->main->scr ||
-		cui->current == &cui->plugin_menu->scr;
+	repost_menu = cui->current_scr == &cui->main->scr ||
+		cui->current_scr == &cui->plugin_menu->scr;
 	if (repost_menu)
-		nc_scr_unpost(cui->current);
+		nc_scr_unpost(cui->current_scr);
 
 	talloc_free(cui->main);
 	cui->main = main_menu_init(cui);
 	cui->plugin_menu = plugin_menu_init(cui);
 
 	if (repost_menu) {
-		cui->current = &cui->main->scr;
-		nc_scr_post(cui->current);
+		cui->current_scr = &cui->main->scr;
+		nc_scr_post(cui->current_scr);
 	}
 
 	discover_client_enumerate(cui->client);
@@ -1584,7 +1584,7 @@ static void cui_update_config(struct config *config, void *arg)
 		config_screen_update(cui->config_screen, config, cui->sysinfo);
 
 	if (config->safe_mode)
-		nc_scr_status_printf(cui->current,
+		nc_scr_status_printf(cui->current_scr,
 				_("SAFE MODE: select '%s' to continue"),
 				_("Rescan devices"));
 }
@@ -1805,10 +1805,10 @@ static int cui_server_wait(void *arg)
 	if (!cui->client) {
 		waiter_register_timeout(cui->waitset, 1000, cui_server_wait,
 					cui);
-		nc_scr_status_printf(cui->current,
+		nc_scr_status_printf(cui->current_scr,
 				     "Info: Waiting for device discovery");
 	} else {
-		nc_scr_status_free(cui->current);
+		nc_scr_status_free(cui->current_scr);
 		talloc_steal(cui, cui->client);
 
 		if (cui->has_input) {
@@ -1848,7 +1848,7 @@ struct cui *cui_init(int timeout)
 		goto fail_alloc;
 	}
 
-	cui->c_sig = pb_cui_sig;
+	cui->sig = pb_cui_sig;
 	cui->waitset = waitset_create(cui);
 	cui->statuslog = statuslog_init(cui);
 
@@ -1952,10 +1952,10 @@ int cui_run(struct cui *cui)
 	assert(cui);
 	assert(cui->main);
 
-	cui->current = &cui->main->scr;
+	cui->current_scr = &cui->main->scr;
 	cui->default_item = 0;
 
-	nc_scr_post(cui->current);
+	nc_scr_post(cui->current_scr);
 
 	while (1) {
 		int result = waiter_poll(cui->waitset);

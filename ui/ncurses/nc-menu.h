@@ -45,7 +45,7 @@ struct pmenu;
  */
 
 struct pmenu_item {
-	enum pb_nc_sig i_sig;
+	enum pb_nc_sig sig;
 	ITEM *nci;
 	struct pmenu *pmenu;
 	void *data;
@@ -66,7 +66,7 @@ static inline struct pmenu_item *pmenu_item_from_arg(void *arg)
 {
 	struct pmenu_item *item = (struct pmenu_item *)arg;
 
-	assert(item->i_sig == pb_item_sig);
+	assert(item->sig == pb_item_sig);
 	return item;
 }
 

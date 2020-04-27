@@ -162,7 +162,7 @@ struct pmenu_item *pmenu_item_create(struct pmenu *menu, const char *name)
 
 	label = pmenu_item_label(item, name);
 
-	item->i_sig = pb_item_sig;
+	item->sig = pb_item_sig;
 	item->pmenu = menu;
 	item->nci = new_item(label, NULL);
 

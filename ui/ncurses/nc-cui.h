@@ -50,12 +50,12 @@ struct cui_opt_data {
  */
 
 struct cui {
-	enum pb_nc_sig c_sig;
+	enum pb_nc_sig sig;
 	bool has_input;
 	struct autoboot_option *autoboot_opt;
 	sig_atomic_t abort;
 	sig_atomic_t resize;
-	struct nc_scr *current;
+	struct nc_scr *current_scr;
 	struct pmenu *main;
 	struct pmenu *plugin_menu;
 	unsigned int n_plugins;
@@ -125,7 +125,7 @@ static inline struct cui *cui_from_arg(void *arg)
 {
 	struct cui *cui = (struct cui *)arg;
 
-	assert(cui->c_sig == pb_cui_sig);
+	assert(cui->sig == pb_cui_sig);
 	return cui;
 }
 

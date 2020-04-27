@@ -112,7 +112,7 @@ static void add_url_screen_process_key(struct nc_scr *scr, int key)
 		cui_show_help(screen->cui, _("Retrieve Config"),
 			&add_url_help_text);
 
-	} else if (handled && (screen->cui->current == scr)) {
+	} else if (handled && (screen->cui->current_scr == scr)) {
 		pad_refresh(screen);
 	}
 }
