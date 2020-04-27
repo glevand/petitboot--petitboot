@@ -569,10 +569,10 @@ static int pmenu_destructor(void *ptr)
  * instance.
  */
 
-struct pmenu *pmenu_init(void *ui_ctx, unsigned int item_count,
+struct pmenu *pmenu_init(struct cui *cui, unsigned int item_count,
 	void (*on_exit)(struct pmenu *))
 {
-	struct pmenu *menu = talloc_zero(ui_ctx, struct pmenu);
+	struct pmenu *menu = talloc_zero(cui, struct pmenu);
 	if (!menu)
 		return NULL;
 
@@ -585,7 +585,7 @@ struct pmenu *pmenu_init(void *ui_ctx, unsigned int item_count,
 		return NULL;
 	}
 
-	nc_scr_init(&menu->scr, pb_pmenu_sig, 0, ui_ctx, pmenu_process_key,
+	nc_scr_init(&menu->scr, pb_pmenu_sig, 0, cui, pmenu_process_key,
 		pmenu_post, pmenu_unpost, pmenu_resize);
 
 	menu->item_count = item_count;
