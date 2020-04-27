@@ -43,16 +43,27 @@ enum pb_nc_sig {
 	pb_cui_sig		= 111,
 	pb_pmenu_sig		= 222,
 	pb_item_sig		= 333,
-	pb_boot_editor_sig	= 444,
-	pb_text_screen_sig	= 555,
-	pb_config_screen_sig	= 666,
-	pb_lang_screen_sig	= 777,
-	pb_add_url_screen_sig	= 888,
-	pb_subset_screen_sig	= 101,
-	pb_plugin_screen_sig	= 202,
-	pb_auth_screen_sig	= 303,
+
+	pb_screen_sig_min	= 444,
+	pb_screen_sig,
+	pb_main_screen_sig,
+	pb_boot_editor_sig,
+	pb_text_screen_sig,
+	pb_config_screen_sig,
+	pb_lang_screen_sig,
+	pb_add_url_screen_sig,
+	pb_subset_screen_sig,
+	pb_plugin_screen_sig,
+	pb_auth_screen_sig,
+	pb_screen_sig_max,
+
 	pb_removed_sig		= -999,
 };
+
+static inline bool scr_sig_check(enum pb_nc_sig sig)
+{
+	return (sig > pb_screen_sig_min && sig < pb_screen_sig_max);
+}
 
 static inline void nc_flush_keys(void)
 {

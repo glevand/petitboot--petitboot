@@ -114,10 +114,12 @@ static inline struct pmenu *pmenu_from_scr(struct nc_scr *scr)
 {
 	struct pmenu *pmenu;
 
-	assert(scr->sig == pb_pmenu_sig);
+	assert(scr_sig_check(scr->sig));
+
 	pmenu = (struct pmenu *)((char *)scr
 		- (size_t)&((struct pmenu *)0)->scr);
-	assert(pmenu->scr.sig == pb_pmenu_sig);
+
+	assert(scr_sig_check(pmenu->scr.sig));
 
 	return pmenu;
 }
