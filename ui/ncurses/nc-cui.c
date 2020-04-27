@@ -459,6 +459,7 @@ static void cui_boot_editor_on_exit(struct cui *cui,
 
 		cod = talloc_zero(NULL, struct cui_opt_data);
 		cod->name = talloc_asprintf(cod, _("User item %u"), ++user_idx);
+		cod->sig = pb_cui_opt_data_sig;
 
 		item = pmenu_item_create(menu, cod->name);
 		if (!item) {
@@ -984,6 +985,7 @@ static int cui_boot_option_add(struct device *dev, struct boot_option *opt,
 	cod->dev = dev;
 	cod->opt_hash = pb_opt_hash(dev, opt);
 	cod->name = opt->name;
+	cod->sig = pb_cui_opt_data_sig;
 
 	if (plugin_option) {
 		cod->pd = talloc(i, struct pb_plugin_data);
@@ -1166,6 +1168,7 @@ static int cui_device_add(struct device *dev, void *arg)
 	cod = talloc_zero(dev_hdr, struct cui_opt_data);
 	cod->name = talloc_strdup(dev_hdr, dev->id);
 	cod->dev = dev;
+	cod->sig = pb_cui_opt_data_sig;
 	dev_hdr->data = cod;
 
 	if (cui->current_scr == &cui->main->scr)

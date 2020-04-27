@@ -342,6 +342,7 @@ struct pmenu_item *pmenu_find_device(struct pmenu *menu, struct device *dev,
 	cod = talloc_zero(dev_hdr, struct cui_opt_data);
 	cod->name = talloc_strdup(dev_hdr, opt->device_id);
 	cod->dev = dev;
+	cod->sig = pb_cui_opt_data_sig;
 	dev_hdr->data = cod;
 
 	pb_debug("%s: returning %s\n",__func__,cod->name);

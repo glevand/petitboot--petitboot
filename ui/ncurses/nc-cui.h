@@ -26,6 +26,7 @@
 #include "nc-helpscreen.h"
 
 struct cui_opt_data {
+	enum pb_nc_sig sig;
 	char *name;
 	union {
 		struct pb_boot_data *bd;
@@ -146,6 +147,13 @@ static inline struct cui *cui_from_item(struct pmenu_item *item)
 {
 	assert(item->sig == pb_item_sig);
 	return cui_from_pmenu(item->pmenu);
+}
+
+static inline struct cui_opt_data *cod_from_item(struct pmenu_item *item)
+{
+	struct cui_opt_data *cod = item->data;
+	assert(cod->sig == pb_cui_opt_data_sig);
+	return cod;
 }
 
 #endif
