@@ -99,7 +99,7 @@ struct pmenu {
 	void (*on_new)(struct pmenu *menu);
 };
 
-struct pmenu *pmenu_init(void *ui_ctx, unsigned int item_count,
+struct pmenu *pmenu_init(struct cui *cui, unsigned int item_count,
 	void (*on_exit)(struct pmenu *));
 int pmenu_setup(struct pmenu *menu);
 unsigned int pmenu_grow(struct pmenu *menu, unsigned int count);
