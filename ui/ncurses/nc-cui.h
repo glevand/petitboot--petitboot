@@ -129,9 +129,15 @@ static inline struct cui *cui_from_arg(void *arg)
 	return cui;
 }
 
+static inline struct cui *cui_from_scr(struct nc_scr *scr)
+{
+	assert(scr->cui->sig == pb_cui_sig);
+	return scr->cui;
+}
+
 static inline struct cui *cui_from_pmenu(struct pmenu *menu)
 {
-	return cui_from_arg(menu->scr.ui_ctx);
+	return menu->scr.cui;
 }
 
 static inline struct cui *cui_from_item(struct pmenu_item *item)

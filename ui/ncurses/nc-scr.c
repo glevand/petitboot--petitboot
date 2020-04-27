@@ -115,14 +115,14 @@ void nc_scr_status_printf(struct nc_scr *scr, const char *format, ...)
 }
 
 int nc_scr_init(struct nc_scr *scr, enum pb_nc_sig sig, int begin_x,
-	void *ui_ctx,
+	struct cui *cui,
 	void (*process_key)(struct nc_scr *, int),
 	int (*post)(struct nc_scr *),
 	int (*unpost)(struct nc_scr *),
 	void (*resize)(struct nc_scr *))
 {
 	scr->sig = sig;
-	scr->ui_ctx = ui_ctx;
+	scr->cui = cui;
 	scr->process_key = process_key;
 	scr->post = post;
 	scr->unpost = unpost;
