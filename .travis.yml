@@ -32,5 +32,6 @@ deploy:
   github-token: $GITHUB_TOKEN
   local_dir: "doc/_build/html"
   on:
+    repo: open-power/petitboot
     branch: master
     condition: "$DOCS = true"
