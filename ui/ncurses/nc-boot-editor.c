@@ -580,7 +580,7 @@ void boot_editor_update(struct boot_editor *boot_editor,
 {
 	const char *str;
 
-	if (boot_editor->cui->current != boot_editor_scr(boot_editor)) {
+	if (boot_editor->cui->current_scr != boot_editor_scr(boot_editor)) {
 		boot_editor->need_update = true;
 		return;
 	}
