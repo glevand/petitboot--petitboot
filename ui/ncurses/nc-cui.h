@@ -131,6 +131,7 @@ static inline struct cui *cui_from_arg(void *arg)
 
 static inline struct cui *cui_from_scr(struct nc_scr *scr)
 {
+	assert(scr_sig_check(scr->sig));
 	assert(scr->cui->sig == pb_cui_sig);
 	return scr->cui;
 }
