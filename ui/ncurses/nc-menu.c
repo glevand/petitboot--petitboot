@@ -552,8 +552,10 @@ static int pmenu_destructor(void *ptr)
 {
 	struct pmenu *menu = ptr;
 
+	assert(menu->sig == pb_pmenu_sig);
 	assert(scr_sig_check(menu->scr.sig));
 
+	menu->sig = pb_removed_sig;
 	menu->scr.sig = pb_removed_sig;
 
 	unpost_menu(menu->ncm);
@@ -590,6 +592,7 @@ struct pmenu *pmenu_init(struct cui *cui, unsigned int item_count,
 	nc_scr_init(&menu->scr, pb_screen_sig, 0, cui, pmenu_process_key,
 		pmenu_post, pmenu_unpost, pmenu_resize);
 
+	menu->sig = pb_pmenu_sig;
 	menu->item_count = item_count;
 	menu->insert_pt = 0; /* insert from top */
 	menu->on_exit = on_exit;

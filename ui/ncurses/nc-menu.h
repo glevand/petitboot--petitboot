@@ -87,6 +87,7 @@ int pmenu_main_hot_keys(struct pmenu *menu, struct pmenu_item *item, int c);
 
 struct pmenu {
 	struct nc_scr scr;
+	enum pb_nc_sig sig;
 	MENU *ncm;
 	ITEM **items;
 	unsigned int item_count;
@@ -119,6 +120,7 @@ static inline struct pmenu *pmenu_from_scr(struct nc_scr *scr)
 	pmenu = (struct pmenu *)((char *)scr
 		- (size_t)&((struct pmenu *)0)->scr);
 
+	assert(pmenu->sig == pb_pmenu_sig);
 	assert(scr_sig_check(pmenu->scr.sig));
 
 	return pmenu;
