@@ -242,7 +242,7 @@ void pmenu_item_add(struct pmenu *menu, struct pmenu_item *item,
 struct pmenu_item *pmenu_find_device(struct pmenu *menu, struct device *dev,
 	struct boot_option *opt)
 {
-	struct pmenu_item *item, *dev_hdr = NULL;
+	struct pmenu_item *dev_hdr = NULL;
 	struct cui *cui = cui_from_pmenu(menu);
 	bool newdev = true, matched = false;
 	struct interface_info *intf;
@@ -254,11 +254,15 @@ struct pmenu_item *pmenu_find_device(struct pmenu *menu, struct device *dev,
 	char buf[256];
 
 	for (i = 0; i < menu->item_count; i++) {
+		struct pmenu_item *item;
+		
 		item = item_userptr(menu->items[i]);
-		cod = cod_from_item(item);
-		/* boot entries will have opt defined */
-		if (!cod || cod->opt)
+		cod = item->data;
+
+		if (!cod || cod->sig != pb_cui_opt_data_sig || cod->opt) {
 			continue;
+		}
+
 		if (cod->dev == dev) {
 			pb_debug("%s: opt %s fits under %s\n",__func__,
 				 opt->name, opt->device_id);

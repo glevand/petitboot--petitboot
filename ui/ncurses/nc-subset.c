@@ -70,13 +70,16 @@ void subset_screen_update(struct subset_screen *screen)
 
 static struct subset_screen *subset_screen_from_scr(struct nc_scr *scr)
 {
-	struct subset_screen *subset_screen;
+	struct subset_screen *screen;
 
 	assert(scr->sig == pb_subset_screen_sig);
-	subset_screen = (struct subset_screen *)
+
+	screen = (struct subset_screen *)
 		((char *)scr - (size_t)&((struct subset_screen *)0)->scr);
-	assert(subset_screen->scr.sig == pb_subset_screen_sig);
-	return subset_screen;
+
+	assert(screen->scr.sig == pb_subset_screen_sig);
+
+	return screen;
 }
 
 static void pad_refresh(struct subset_screen *screen)

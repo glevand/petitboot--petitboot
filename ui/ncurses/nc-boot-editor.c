@@ -84,13 +84,16 @@ extern const struct help_text boot_editor_help_text;
 
 static struct boot_editor *boot_editor_from_scr(struct nc_scr *scr)
 {
-	struct boot_editor *boot_editor;
+	struct boot_editor *screen;
 
 	assert(scr->sig == pb_boot_editor_sig);
-	boot_editor = (struct boot_editor *)
+
+	screen = (struct boot_editor *)
 		((char *)scr - (size_t)&((struct boot_editor *)0)->scr);
-	assert(boot_editor->scr.sig == pb_boot_editor_sig);
-	return boot_editor;
+
+	assert(screen->scr.sig == pb_boot_editor_sig);
+
+	return screen;
 }
 
 static void pad_refresh(struct boot_editor *boot_editor)

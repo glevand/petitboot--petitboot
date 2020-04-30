@@ -82,13 +82,16 @@ struct lang_screen {
 
 static struct lang_screen *lang_screen_from_scr(struct nc_scr *scr)
 {
-	struct lang_screen *lang_screen;
+	struct lang_screen *screen;
 
 	assert(scr->sig == pb_lang_screen_sig);
-	lang_screen = (struct lang_screen *)
+
+	screen = (struct lang_screen *)
 		((char *)scr - (size_t)&((struct lang_screen *)0)->scr);
-	assert(lang_screen->scr.sig == pb_lang_screen_sig);
-	return lang_screen;
+
+	assert(screen->scr.sig == pb_lang_screen_sig);
+
+	return screen;
 }
 
 static void pad_refresh(struct lang_screen *screen)
