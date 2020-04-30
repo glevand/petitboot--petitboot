@@ -34,7 +34,7 @@
 #define N_FIELDS        3
 
 struct subset_screen {
-	struct nc_scr		scr;
+	struct nc_scr		*scr;
 	struct cui		*cui;
 	struct nc_scr 		*return_scr;
 	struct nc_widgetset	*widgetset;
@@ -73,11 +73,12 @@ static struct subset_screen *subset_screen_from_scr(struct nc_scr *scr)
 	struct subset_screen *screen;
 
 	assert(scr->sig == pb_subset_screen_sig);
+	assert(scr->container);
 
-	screen = (struct subset_screen *)
-		((char *)scr - (size_t)&((struct subset_screen *)0)->scr);
+	screen = scr->container;
 
-	assert(screen->scr.sig == pb_subset_screen_sig);
+	assert(screen->scr);
+	assert(screen->scr->sig == pb_subset_screen_sig);
 
 	return screen;
 }
@@ -86,8 +87,8 @@ static void pad_refresh(struct subset_screen *screen)
 {
 	int y, x, rows, cols;
 
-	getmaxyx(screen->scr.sub_ncw, rows, cols);
-	getbegyx(screen->scr.sub_ncw, y, x);
+	getmaxyx(screen->scr->sub_ncw, rows, cols);
+	getbegyx(screen->scr->sub_ncw, y, x);
 
 	prefresh(screen->pad, screen->scroll_y, 0, y, x, rows, cols);
 }
@@ -134,7 +135,7 @@ static int subset_screen_unpost(struct nc_scr *scr)
 
 struct nc_scr *subset_screen_scr(struct subset_screen *screen)
 {
-	return &screen->scr;
+	return screen->scr;
 }
 
 static void ok_click(void *arg)
@@ -206,7 +207,7 @@ static void subset_screen_widget_focus(struct nc_widget *widget, void *arg)
 	int w_y, s_max;
 
 	w_y = widget_y(widget) + widget_focus_y(widget);
-	s_max = getmaxy(screen->scr.sub_ncw) - 1;
+	s_max = getmaxy(screen->scr->sub_ncw) - 1;
 
 	if (w_y < screen->scroll_y)
 		screen->scroll_y = w_y;
@@ -243,7 +244,7 @@ static void subset_screen_draw(struct subset_screen *screen)
 		repost = true;
 	}
 
-	screen->widgetset = widgetset_create(screen, screen->scr.main_ncw,
+	screen->widgetset = widgetset_create(screen, screen->scr->main_ncw,
 			screen->pad);
 	widgetset_set_widget_focus(screen->widgetset,
 			subset_screen_widget_focus, screen);
@@ -282,18 +283,18 @@ struct subset_screen *subset_screen_init(struct cui *cui,
 
 	screen->return_scr = current_scr;
 
-	nc_scr_init(&screen->scr, pb_subset_screen_sig, 0,
+	screen->scr = nc_scr_init(screen, pb_subset_screen_sig, 0,
 		cui, NULL, subset_screen_process_key,
 		subset_screen_post, subset_screen_unpost,
 		NULL);
 
-	screen->scr.frame.ltitle = talloc_strdup(screen,
+	screen->scr->frame.ltitle = talloc_strdup(screen,
 			title_suffix);
-	screen->scr.frame.rtitle = NULL;
-	screen->scr.frame.help = talloc_strdup(screen,
+	screen->scr->frame.rtitle = NULL;
+	screen->scr->frame.help = talloc_strdup(screen,
 			_("tab=next, shift+tab=previous, x=exit"));
 
-	scrollok(screen->scr.sub_ncw, true);
+	scrollok(screen->scr->sub_ncw, true);
 
 	subset_screen_draw(screen);
 

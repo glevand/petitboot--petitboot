@@ -22,6 +22,7 @@
 
 #include <assert.h>
 #include <stdarg.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "log/log.h"
@@ -114,14 +115,16 @@ void nc_scr_status_printf(struct nc_scr *scr, const char *format, ...)
 	wrefresh(scr->main_ncw);
 }
 
-int nc_scr_init(struct nc_scr *scr, enum pb_nc_sig sig, int begin_x,
-	struct cui *cui,
-	struct pmenu *pmenu,
+struct nc_scr *nc_scr_init(void *container, enum pb_nc_sig sig, int begin_x,
+	struct cui *cui, struct pmenu *pmenu,
 	void (*process_key)(struct nc_scr *, int),
 	int (*post)(struct nc_scr *),
 	int (*unpost)(struct nc_scr *),
 	void (*resize)(struct nc_scr *))
 {
+	struct nc_scr *scr = talloc_zero(container, struct nc_scr);
+
+	scr->container = container;
 	scr->sig = sig;
 	scr->cui = cui;
 	scr->pmenu = pmenu;
@@ -132,14 +135,23 @@ int nc_scr_init(struct nc_scr *scr, enum pb_nc_sig sig, int begin_x,
 
 	scr->main_ncw = newwin(LINES, COLS, 0, 0);
 
+	if (!scr->main_ncw) {
+		pb_log_fn("ERROR: newwin failed\n");
+		assert(0);
+		exit(EXIT_FAILURE);
+	}
+
 	scr->sub_ncw = derwin(scr->main_ncw,
 		LINES - nc_scr_frame_lines,
 		COLS - nc_scr_frame_cols - begin_x,
 		nc_scr_pos_sub,
 		begin_x);
 
-	assert(scr->main_ncw);
-	assert(scr->sub_ncw);
+	if (!scr->sub_ncw) {
+		pb_log_fn("ERROR: derwin failed\n");
+		assert(0);
+		exit(EXIT_FAILURE);
+	}
 
-	return scr->main_ncw && scr->sub_ncw;
+	return scr;
 }

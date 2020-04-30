@@ -30,7 +30,7 @@
 #include "nc-widgets.h"
 
 struct boot_editor {
-	struct nc_scr		scr;
+	struct nc_scr		*scr;
 	struct cui		*cui;
 	void			*data;
 	struct pmenu_item	*item;
@@ -87,11 +87,12 @@ static struct boot_editor *boot_editor_from_scr(struct nc_scr *scr)
 	struct boot_editor *screen;
 
 	assert(scr->sig == pb_boot_editor_sig);
+	assert(scr->container);
 
-	screen = (struct boot_editor *)
-		((char *)scr - (size_t)&((struct boot_editor *)0)->scr);
+	screen = scr->container;
 
-	assert(screen->scr.sig == pb_boot_editor_sig);
+	assert(screen->scr);
+	assert(screen->scr->sig == pb_boot_editor_sig);
 
 	return screen;
 }
@@ -100,8 +101,8 @@ static void pad_refresh(struct boot_editor *boot_editor)
 {
 	int y, x, rows, cols;
 
-	getmaxyx(boot_editor->scr.sub_ncw, rows, cols);
-	getbegyx(boot_editor->scr.sub_ncw, y, x);
+	getmaxyx(boot_editor->scr->sub_ncw, rows, cols);
+	getbegyx(boot_editor->scr->sub_ncw, y, x);
 
 	prefresh(boot_editor->pad, boot_editor->scroll_y, 0,
 			y, x, rows, cols);
@@ -111,7 +112,7 @@ static struct boot_editor *boot_editor_from_arg(void *arg)
 {
 	struct boot_editor *boot_editor = arg;
 
-	assert(boot_editor->scr.sig == pb_boot_editor_sig);
+	assert(boot_editor->scr->sig == pb_boot_editor_sig);
 	return boot_editor;
 }
 
@@ -131,7 +132,7 @@ static int boot_editor_post(struct nc_scr *scr)
 		redrawwin(scr->main_ncw);
 		boot_editor->need_redraw = false;
 	}
-	wrefresh(boot_editor->scr.main_ncw);
+	wrefresh(boot_editor->scr->main_ncw);
 	pad_refresh(boot_editor);
 	return 0;
 }
@@ -144,7 +145,7 @@ static int boot_editor_unpost(struct nc_scr *scr)
 
 struct nc_scr *boot_editor_scr(struct boot_editor *boot_editor)
 {
-	return &boot_editor->scr;
+	return boot_editor->scr;
 }
 
 static void boot_editor_resize(struct nc_scr *scr)
@@ -276,7 +277,7 @@ static void boot_editor_process_key(struct nc_scr *scr, int key)
 static int boot_editor_destructor(void *arg)
 {
 	struct boot_editor *boot_editor = boot_editor_from_arg(arg);
-	boot_editor->scr.sig = pb_removed_sig;
+	boot_editor->scr->sig = pb_removed_sig;
 	if (boot_editor->pad)
 		delwin(boot_editor->pad);
 	return 0;
@@ -363,7 +364,7 @@ static void boot_editor_widget_focus(struct nc_widget *widget, void *arg)
 	int w_y, s_max;
 
 	w_y = widget_y(widget) + widget_focus_y(widget);
-	s_max = getmaxy(boot_editor->scr.sub_ncw) - 1;
+	s_max = getmaxy(boot_editor->scr->sub_ncw) - 1;
 
 	if (w_y < boot_editor->scroll_y)
 		boot_editor->scroll_y = w_y;
@@ -566,7 +567,7 @@ static void boot_editor_draw(struct boot_editor *boot_editor,
 	}
 
 	boot_editor->widgetset = widgetset_create(boot_editor,
-			boot_editor->scr.main_ncw,
+			boot_editor->scr->main_ncw,
 			boot_editor->pad);
 	widgetset_set_widget_focus(boot_editor->widgetset,
 			boot_editor_widget_focus, boot_editor);
@@ -668,16 +669,16 @@ struct boot_editor *boot_editor_init(struct cui *cui,
 	boot_editor->label_x = 1;
 	boot_editor->field_x = 2 + max(max(ncols1, ncols2), ncols3);
 
-	nc_scr_init(&boot_editor->scr, pb_boot_editor_sig, 0,
+	boot_editor->scr = nc_scr_init(boot_editor, pb_boot_editor_sig, 0,
 			cui, NULL, boot_editor_process_key,
 		boot_editor_post, boot_editor_unpost, boot_editor_resize);
 
-	boot_editor->scr.frame.ltitle = talloc_strdup(boot_editor,
+	boot_editor->scr->frame.ltitle = talloc_strdup(boot_editor,
 			_("Petitboot Option Editor"));
-	boot_editor->scr.frame.rtitle = NULL;
-	boot_editor->scr.frame.help = talloc_strdup(boot_editor,
+	boot_editor->scr->frame.rtitle = NULL;
+	boot_editor->scr->frame.help = talloc_strdup(boot_editor,
 			_("tab=next, shift+tab=previous, x=exit, h=help"));
-	nc_scr_frame_draw(&boot_editor->scr);
+	nc_scr_frame_draw(boot_editor->scr);
 
 	if (item) {
 		struct pb_boot_data *bd = cod_from_item(item)->bd;
@@ -695,7 +696,7 @@ struct boot_editor *boot_editor_init(struct cui *cui,
 	}
 
 	boot_editor_draw(boot_editor, sysinfo);
-	wrefresh(boot_editor->scr.main_ncw);
+	wrefresh(boot_editor->scr->main_ncw);
 
 	return boot_editor;
 }

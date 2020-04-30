@@ -141,7 +141,8 @@ static inline struct cui *cui_from_pmenu(struct pmenu *menu)
 {
 	assert(menu);
 	assert(menu->sig == pb_pmenu_sig);
-	return menu->scr.cui;
+	assert(menu->scr->cui->sig == pb_cui_sig);
+	return menu->scr->cui;
 }
 
 static inline struct cui *cui_from_item(struct pmenu_item *item)

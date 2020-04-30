@@ -22,7 +22,7 @@
 #include "nc-cui.h"
 
 struct text_screen {
-	struct nc_scr		scr;
+	struct nc_scr		*scr;
 	struct cui		*cui;
 	const char		**lines;
 	int			n_lines;
@@ -37,7 +37,6 @@ struct text_screen {
 void text_screen_init(struct text_screen *screen, struct cui *cui,
 		const char *title, void (*on_exit)(struct cui *));
 
-struct text_screen *text_screen_from_scr(struct nc_scr *scr);
 struct nc_scr *text_screen_scr(struct text_screen *screen);
 
 /* content modification */
