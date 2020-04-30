@@ -501,6 +501,7 @@ static void cui_boot_editor_on_exit(struct cui *cui,
 		nc_scr_post(&menu->scr);
 	} else {
 		cod = item->data;
+		assert(cod->sig == pb_cui_opt_data_sig);
 	}
 
 	cod->bd = talloc_steal(cod, bd);

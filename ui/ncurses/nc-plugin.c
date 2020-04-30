@@ -87,13 +87,16 @@ static void plugin_screen_draw(struct plugin_screen *screen,
 
 static struct plugin_screen *plugin_screen_from_scr(struct nc_scr *scr)
 {
-	struct plugin_screen *plugin_screen;
+	struct plugin_screen *screen;
 
 	assert(scr->sig == pb_plugin_screen_sig);
-	plugin_screen = (struct plugin_screen *)
+
+	screen = (struct plugin_screen *)
 		((char *)scr - (size_t)&((struct plugin_screen *)0)->scr);
-	assert(plugin_screen->scr.sig == pb_plugin_screen_sig);
-	return plugin_screen;
+
+	assert(screen->scr.sig == pb_plugin_screen_sig);
+
+	return screen;
 }
 
 struct nc_scr *plugin_screen_scr(struct plugin_screen *screen)

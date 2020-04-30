@@ -65,13 +65,16 @@ struct add_url_screen {
 
 static struct add_url_screen *add_url_screen_from_scr(struct nc_scr *scr)
 {
-	struct add_url_screen *add_url_screen;
+	struct add_url_screen *screen;
 
 	assert(scr->sig == pb_add_url_screen_sig);
-	add_url_screen = (struct add_url_screen *)
+
+	screen = (struct add_url_screen *)
 		((char *)scr - (size_t)&((struct add_url_screen *)0)->scr);
-	assert(add_url_screen->scr.sig == pb_add_url_screen_sig);
-	return add_url_screen;
+
+	assert(screen->scr.sig == pb_add_url_screen_sig);
+
+	return screen;
 }
 
 static void pad_refresh(struct add_url_screen *screen)

@@ -139,13 +139,16 @@ struct config_screen {
 
 static struct config_screen *config_screen_from_scr(struct nc_scr *scr)
 {
-	struct config_screen *config_screen;
+	struct config_screen *screen;
 
 	assert(scr->sig == pb_config_screen_sig);
-	config_screen = (struct config_screen *)
+
+	screen = (struct config_screen *)
 		((char *)scr - (size_t)&((struct config_screen *)0)->scr);
-	assert(config_screen->scr.sig == pb_config_screen_sig);
-	return config_screen;
+
+	assert(screen->scr.sig == pb_config_screen_sig);
+
+	return screen;
 }
 
 static void pad_refresh(struct config_screen *screen)

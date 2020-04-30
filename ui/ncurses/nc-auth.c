@@ -74,13 +74,16 @@ struct nc_scr *auth_screen_scr(struct auth_screen *screen)
 
 static struct auth_screen *auth_screen_from_scr(struct nc_scr *scr)
 {
-	struct auth_screen *auth_screen;
+	struct auth_screen *screen;
 
 	assert(scr->sig == pb_auth_screen_sig);
-	auth_screen = (struct auth_screen *)
+
+	screen = (struct auth_screen *)
 		((char *)scr - (size_t)&((struct auth_screen *)0)->scr);
-	assert(auth_screen->scr.sig == pb_auth_screen_sig);
-	return auth_screen;
+
+	assert(screen->scr.sig == pb_auth_screen_sig);
+
+	return screen;
 }
 
 static void auth_screen_process_key(struct nc_scr *scr, int key)
