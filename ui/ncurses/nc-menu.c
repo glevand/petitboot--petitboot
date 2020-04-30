@@ -264,20 +264,20 @@ struct pmenu_item *pmenu_find_device(struct pmenu *menu, struct device *dev,
 		}
 
 		if (cod->dev == dev) {
-			pb_debug("%s: opt %s fits under %s\n",__func__,
-				 opt->name, opt->device_id);
+			pb_debug_fl("opt %s fits under '%s'\n", opt->name,
+				opt->device_id);
 			newdev = false;
 			break;
 		}
 	}
 
 	if (!newdev) {
-		pb_debug("%s: No new device\n",__func__);
+		pb_debug_fl("No new device\n");
 		return NULL;
 	}
 
 	/* Create a dummy pmenu_item to represent the dev */
-	pb_debug("%s: Building new item\n",__func__);
+	pb_debug_fl("Building new item\n");
 	sys = cui->sysinfo;
 	switch (dev->type) {
 	case DEVICE_TYPE_OPTICAL:
@@ -326,8 +326,8 @@ struct pmenu_item *pmenu_find_device(struct pmenu *menu, struct device *dev,
 		break;
 	}
 	if (!matched) {
-		pb_debug("%s: No matching device found for %s (%s)\n",
-			__func__,opt->device_id, dev->id);
+		pb_debug_fl("No matching device found for %s (%s)\n",
+			opt->device_id, dev->id);
 		snprintf(buf, sizeof(buf), "[%s: %s]",
 			_("Unknown Device"), dev->id);
 	}
@@ -349,7 +349,7 @@ struct pmenu_item *pmenu_find_device(struct pmenu *menu, struct device *dev,
 	cod->sig = pb_cui_opt_data_sig;
 	dev_hdr->data = cod;
 
-	pb_debug("%s: returning %s\n",__func__,cod->name);
+	pb_debug_fl("Returning '%s'\n", cod->name);
 	return dev_hdr;
 }
 
