@@ -38,7 +38,7 @@
 extern const struct help_text add_url_help_text;
 
 struct add_url_screen {
-	struct nc_scr		scr;
+	struct nc_scr		*scr;
 	struct cui		*cui;
 	struct nc_widgetset	*widgetset;
 	WINDOW			*pad;
@@ -68,11 +68,12 @@ static struct add_url_screen *add_url_screen_from_scr(struct nc_scr *scr)
 	struct add_url_screen *screen;
 
 	assert(scr->sig == pb_add_url_screen_sig);
+	assert(scr->container);
 
-	screen = (struct add_url_screen *)
-		((char *)scr - (size_t)&((struct add_url_screen *)0)->scr);
+	screen = scr->container;
 
-	assert(screen->scr.sig == pb_add_url_screen_sig);
+	assert(screen->scr);
+	assert(screen->scr->sig == pb_add_url_screen_sig);
 
 	return screen;
 }
@@ -81,8 +82,8 @@ static void pad_refresh(struct add_url_screen *screen)
 {
 	int y, x, rows, cols;
 
-	getmaxyx(screen->scr.sub_ncw, rows, cols);
-	getbegyx(screen->scr.sub_ncw, y, x);
+	getmaxyx(screen->scr->sub_ncw, rows, cols);
+	getbegyx(screen->scr->sub_ncw, y, x);
 
 	prefresh(screen->pad, screen->scroll_y, 0, y, x, rows, cols);
 }
@@ -152,7 +153,7 @@ static int add_url_screen_post(struct nc_scr *scr)
 		redrawwin(scr->main_ncw);
 		screen->need_redraw = false;
 	}
-	wrefresh(screen->scr.main_ncw);
+	wrefresh(screen->scr->main_ncw);
 	pad_refresh(screen);
 	return 0;
 }
@@ -166,7 +167,7 @@ static int add_url_screen_unpost(struct nc_scr *scr)
 
 struct nc_scr *add_url_screen_scr(struct add_url_screen *screen)
 {
-	return &screen->scr;
+	return screen->scr;
 }
 
 static void add_url_process_cb(struct nc_scr *scr)
@@ -185,11 +186,11 @@ static void ok_click(void *arg)
 		if (screen_process_form(screen))
 			/* errors are written to the status line, so we'll need
 			 * to refresh */
-			wrefresh(screen->scr.main_ncw);
+			wrefresh(screen->scr->main_ncw);
 		else
 			screen->exit = true;
 	} else {
-		cui_show_auth(screen->cui, screen->scr.main_ncw, false,
+		cui_show_auth(screen->cui, screen->scr->main_ncw, false,
 				add_url_process_cb);
 	}
 }
@@ -243,7 +244,7 @@ static void add_url_screen_widget_focus(struct nc_widget *widget, void *arg)
 	w_height = widget_height(widget);
 	w_focus = widget_focus_y(widget);
 	w_y = widget_y(widget) + w_focus;
-	s_max = getmaxy(screen->scr.sub_ncw) - 1;
+	s_max = getmaxy(screen->scr->sub_ncw) - 1;
 
 	if (w_y < screen->scroll_y)
 		screen->scroll_y = w_y;
@@ -300,20 +301,20 @@ struct add_url_screen *add_url_screen_init(struct cui *cui,
 	screen->field_x = 25;
 	screen->need_redraw = false;
 
-	nc_scr_init(&screen->scr, pb_add_url_screen_sig, 0,
+	screen->scr = nc_scr_init(screen, pb_add_url_screen_sig, 0,
 		cui, NULL, add_url_screen_process_key,
 		add_url_screen_post, add_url_screen_unpost,
 		NULL);
 
-	screen->scr.frame.ltitle = talloc_strdup(screen,
+	screen->scr->frame.ltitle = talloc_strdup(screen,
 			_("Petitboot Config Retrieval"));
-	screen->scr.frame.rtitle = NULL;
-	screen->scr.frame.help = talloc_strdup(screen,
+	screen->scr->frame.rtitle = NULL;
+	screen->scr->frame.help = talloc_strdup(screen,
 			_("tab=next, shift+tab=previous, x=exit, h=help"));
-	nc_scr_frame_draw(&screen->scr);
+	nc_scr_frame_draw(screen->scr);
 
 	screen->pad = newpad(LINES, COLS);
-	screen->widgetset = widgetset_create(screen, screen->scr.main_ncw,
+	screen->widgetset = widgetset_create(screen, screen->scr->main_ncw,
 			screen->pad);
 	widgetset_set_widget_focus(screen->widgetset,
 			add_url_screen_widget_focus, screen);

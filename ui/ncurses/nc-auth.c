@@ -35,7 +35,7 @@
 #define N_FIELDS        5
 
 struct auth_screen {
-	struct nc_scr		scr;
+	struct nc_scr		*scr;
 	struct cui		*cui;
 	struct nc_scr 		*return_scr;
 	struct nc_widgetset 	*widgetset;
@@ -69,7 +69,7 @@ struct nc_scr *auth_screen_return_scr(struct auth_screen *screen)
 
 struct nc_scr *auth_screen_scr(struct auth_screen *screen)
 {
-	return &screen->scr;
+	return screen->scr;
 }
 
 static struct auth_screen *auth_screen_from_scr(struct nc_scr *scr)
@@ -77,11 +77,12 @@ static struct auth_screen *auth_screen_from_scr(struct nc_scr *scr)
 	struct auth_screen *screen;
 
 	assert(scr->sig == pb_auth_screen_sig);
+	assert(scr->container);
 
-	screen = (struct auth_screen *)
-		((char *)scr - (size_t)&((struct auth_screen *)0)->scr);
+	screen = scr->container;
 
-	assert(screen->scr.sig == pb_auth_screen_sig);
+	assert(screen->scr);
+	assert(screen->scr->sig == pb_auth_screen_sig);
 
 	return screen;
 }
@@ -105,7 +106,7 @@ static void auth_screen_process_key(struct nc_scr *scr, int key)
 	if (screen->exit)
 		screen->on_exit(screen->cui);
 	else if (handled)
-		wrefresh(screen->scr.sub_ncw);
+		wrefresh(screen->scr->sub_ncw);
 }
 
 static void auth_screen_frame_draw(struct nc_scr *scr)
@@ -203,8 +204,8 @@ static void auth_screen_draw(struct auth_screen *screen)
 	struct nc_widgetset *set;
 	char *label;
 
-	set = widgetset_create(screen, screen->scr.main_ncw,
-			screen->scr.sub_ncw);
+	set = widgetset_create(screen, screen->scr->main_ncw,
+			screen->scr->sub_ncw);
 	if (!set) {
 		pb_log("%s: failed to create widgetset\n", __func__);
 		return;
@@ -247,8 +248,8 @@ static void auth_screen_draw(struct auth_screen *screen)
 static int auth_screen_destroy(void *arg)
 {
 	struct auth_screen *screen = arg;
-	if (screen->scr.sub_ncw)
-		delwin(screen->scr.sub_ncw);
+	if (screen->scr->sub_ncw)
+		delwin(screen->scr->sub_ncw);
 	return 0;
 }
 
@@ -258,8 +259,7 @@ struct auth_screen *auth_screen_init(struct cui *cui,
 		void (*callback)(struct nc_scr *),
 		void (*on_exit)(struct cui *))
 {
-	struct auth_screen *screen = NULL;
-	struct nc_scr *scr;
+	struct auth_screen *screen;
 	int y, x;
 
 	if (!cui || !parent)
@@ -271,8 +271,7 @@ struct auth_screen *auth_screen_init(struct cui *cui,
 	}
 
 	screen = talloc_zero(cui, struct auth_screen);
-	if (!screen)
-		return NULL;
+
 	talloc_set_destructor(screen, auth_screen_destroy);
 
 	screen->cui = cui;
@@ -288,25 +287,26 @@ struct auth_screen *auth_screen_init(struct cui *cui,
 	 * Manually init our nc_scr: we only want to create the subwin and
 	 * 'inherit' the parent window.
 	 */
-	scr = &screen->scr;
-	scr->sig = pb_auth_screen_sig;
-	scr->cui = cui;
-	scr->pmenu = NULL;
-	scr->process_key = auth_screen_process_key;
-	scr->post = auth_screen_post;
-	scr->unpost = auth_screen_unpost;
-	scr->resize = NULL;
+	screen->scr = talloc_zero(screen, struct nc_scr);
 
+	screen->scr->container = screen;
+	screen->scr->sig = pb_auth_screen_sig;
+	screen->scr->cui = cui;
+	screen->scr->pmenu = NULL;
+	screen->scr->process_key = auth_screen_process_key;
+	screen->scr->post = auth_screen_post;
+	screen->scr->unpost = auth_screen_unpost;
+	screen->scr->resize = NULL;
 
 	getbegyx(parent, y, x);
 	/* Hold on to the real offset from the top of the screen */
 	screen->offset_y = y + 5;
 	(void)x;
 
-	scr->main_ncw = parent;
-	scr->sub_ncw = derwin(parent, set_password ? 15 : 10, COLS - 20,
+	screen->scr->main_ncw = parent;
+	screen->scr->sub_ncw = derwin(parent, set_password ? 15 : 10, COLS - 20,
 			5, 10);	/* relative to parent origin */
-	if (!scr->sub_ncw) {
+	if (!screen->scr->sub_ncw) {
 		pb_log("Could not create subwin\n");
 		goto err;
 	}
@@ -317,8 +317,8 @@ struct auth_screen *auth_screen_init(struct cui *cui,
 err:
 	pb_log("failed to create auth screen\n");
 	if (screen) {
-		if (screen->scr.sub_ncw)
-			delwin(screen->scr.sub_ncw);
+		if (screen->scr->sub_ncw)
+			delwin(screen->scr->sub_ncw);
 		talloc_free(screen);
 	}
 	return NULL;

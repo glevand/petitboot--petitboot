@@ -62,7 +62,7 @@ static int pmenu_post(struct nc_scr *scr)
 	result = post_menu(menu->ncm);
 
 	nc_scr_frame_draw(scr);
-	wrefresh(menu->scr.main_ncw);
+	wrefresh(menu->scr->main_ncw);
 
 	return result;
 }
@@ -375,7 +375,7 @@ static int pmenu_item_get_index(const struct pmenu_item *item)
 static void pmenu_move_cursor(struct pmenu *menu, int req)
 {
 	menu_driver(menu->ncm, req);
-	wrefresh(menu->scr.main_ncw);
+	wrefresh(menu->scr->main_ncw);
 }
 
 /**
@@ -383,7 +383,7 @@ static void pmenu_move_cursor(struct pmenu *menu, int req)
  */
 int pmenu_main_hot_keys(struct pmenu *menu, struct pmenu_item *item, int c)
 {
-	struct nc_scr *scr = &menu->scr;
+	struct nc_scr *scr = menu->scr;
 	(void)item;
 
 	switch (c) {
@@ -416,7 +416,7 @@ static void pmenu_process_key(struct nc_scr *scr, int key)
 	struct pmenu_item *item = pmenu_find_selected(menu);
 	unsigned int i;
 
-	nc_scr_status_free(&menu->scr);
+	nc_scr_status_free(menu->scr);
 
 	if (menu->hot_keys)
 		for (i = 0; i < menu->n_hot_keys; i++) {
@@ -558,15 +558,15 @@ static int pmenu_destructor(void *ptr)
 	struct pmenu *menu = ptr;
 
 	assert(menu->sig == pb_pmenu_sig);
-	assert(scr_sig_check(menu->scr.sig));
+	assert(scr_sig_check(menu->scr->sig));
 
 	menu->sig = pb_removed_sig;
-	menu->scr.sig = pb_removed_sig;
+	menu->scr->sig = pb_removed_sig;
 
 	unpost_menu(menu->ncm);
 	free_menu(menu->ncm);
-	delwin(menu->scr.sub_ncw);
-	delwin(menu->scr.main_ncw);
+	delwin(menu->scr->sub_ncw);
+	delwin(menu->scr->main_ncw);
 	return 0;
 }
 
@@ -594,7 +594,7 @@ struct pmenu *pmenu_init(struct cui *cui, unsigned int item_count,
 		return NULL;
 	}
 
-	nc_scr_init(&menu->scr, pb_screen_sig, 0, cui, menu, pmenu_process_key,
+	menu->scr = nc_scr_init(menu, pb_screen_sig, 0, cui, menu, pmenu_process_key,
 		pmenu_post, pmenu_unpost, pmenu_resize);
 
 	menu->sig = pb_pmenu_sig;
@@ -622,8 +622,8 @@ int pmenu_setup(struct pmenu *menu)
 		return -1;
 	}
 
-	set_menu_win(menu->ncm, menu->scr.main_ncw);
-	set_menu_sub(menu->ncm, menu->scr.sub_ncw);
+	set_menu_win(menu->ncm, menu->scr->main_ncw);
+	set_menu_sub(menu->ncm, menu->scr->sub_ncw);
 
 	/* Makes menu scrollable. */
 	set_menu_format(menu->ncm, LINES - nc_scr_frame_lines, 1);

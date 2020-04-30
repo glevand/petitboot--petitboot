@@ -31,35 +31,47 @@
 #include "nc-cui.h"
 #include "nc-textscreen.h"
 
-struct text_screen *text_screen_from_scr(struct nc_scr *scr)
+static struct text_screen *text_screen_from_scr(struct nc_scr *scr)
 {
-	struct text_screen *text_screen;
+	struct text_screen *screen;
+
 	assert(scr->sig == pb_text_screen_sig);
-	text_screen = container_of(scr, struct text_screen, scr);
-	return text_screen;
+	assert(scr->container);
+
+	screen = scr->container;
+
+	assert(screen->scr);
+	assert(screen->scr->sig == pb_text_screen_sig);
+
+	return screen;
 }
 
 void text_screen_draw(struct text_screen *screen)
 {
 	int max_y, max_x, i, len;
 
-	max_y = getmaxy(screen->scr.sub_ncw);
-	max_x = getmaxx(screen->scr.sub_ncw) - 1;
+	assert(screen);
+	assert(screen->scr);
+	assert(screen->scr->sig == pb_text_screen_sig);
+	assert(screen->scr->sub_ncw);
+
+	max_y = getmaxy(screen->scr->sub_ncw);
+	max_x = getmaxx(screen->scr->sub_ncw) - 1;
 
 	max_y = min(max_y, screen->scroll_y + screen->n_lines);
 
 	for (i = screen->scroll_y; i < max_y; i++) {
 		len = strncols(screen->lines[i]) > max_x ? max_x : -1;
-		mvwaddnstr(screen->scr.sub_ncw, i, 1, screen->lines[i], len);
+		mvwaddnstr(screen->scr->sub_ncw, i, 1, screen->lines[i], len);
 	}
 
-	wrefresh(screen->scr.sub_ncw);
+	wrefresh(screen->scr->sub_ncw);
 }
 
 static void text_screen_scroll(struct text_screen *screen, int key)
 {
-	int win_lines = getmaxy(screen->scr.sub_ncw);
-	int win_cols = getmaxx(screen->scr.sub_ncw) - 1;
+	int win_lines = getmaxy(screen->scr->sub_ncw);
+	int win_cols = getmaxx(screen->scr->sub_ncw) - 1;
 	int delta, len, i;
 
 	if (key == KEY_UP)
@@ -75,21 +87,21 @@ static void text_screen_scroll(struct text_screen *screen, int key)
 		return;
 
 	screen->scroll_y += delta;
-	wscrl(screen->scr.sub_ncw, delta);
+	wscrl(screen->scr->sub_ncw, delta);
 
 
 	if (delta > 0) {
 		i = screen->scroll_y + win_lines - 1;
 		len = strncols(screen->lines[i]) > win_cols ? win_cols : -1;
-		mvwaddnstr(screen->scr.sub_ncw, win_lines - 1, 1,
+		mvwaddnstr(screen->scr->sub_ncw, win_lines - 1, 1,
 				screen->lines[i], len);
 	} else if (delta < 0) {
 		i = screen->scroll_y;
 		len = strncols(screen->lines[i]) > win_cols ? win_cols : -1;
-		mvwaddnstr(screen->scr.sub_ncw, 0, 1, screen->lines[i], len);
+		mvwaddnstr(screen->scr->sub_ncw, 0, 1, screen->lines[i], len);
 	}
 
-	wrefresh(screen->scr.sub_ncw);
+	wrefresh(screen->scr->sub_ncw);
 }
 
 void text_screen_clear(struct text_screen *screen)
@@ -143,7 +155,7 @@ static int text_screen_fold_cb(void *arg, const char *buf, int len)
 
 void text_screen_set_text(struct text_screen *screen, const char *text)
 {
-	fold_text(text, getmaxx(screen->scr.sub_ncw) - 1, text_screen_fold_cb,
+	fold_text(text, getmaxx(screen->scr->sub_ncw) - 1, text_screen_fold_cb,
 			screen);
 }
 
@@ -178,7 +190,10 @@ static void text_screen_resize(struct nc_scr *scr)
 
 struct nc_scr *text_screen_scr(struct text_screen *screen)
 {
-	return &screen->scr;
+	assert(screen->scr);
+	assert(screen->scr->sig == pb_text_screen_sig);
+
+	return screen->scr;
 }
 
 void text_screen_set_help(struct text_screen *screen, const char *title,
@@ -186,7 +201,7 @@ void text_screen_set_help(struct text_screen *screen, const char *title,
 {
 	screen->help_title = title;
 	screen->help_text = text;
-	screen->scr.frame.help = _("x=exit, h=help");
+	screen->scr->frame.help = _("x=exit, h=help");
 }
 
 static int text_screen_post(struct nc_scr *scr)
@@ -207,7 +222,7 @@ static int text_screen_post(struct nc_scr *scr)
 void text_screen_init(struct text_screen *screen, struct cui *cui,
 		const char *title, void (*on_exit)(struct cui *))
 {
-	nc_scr_init(&screen->scr, pb_text_screen_sig, 0,
+	screen->scr = nc_scr_init(screen, pb_text_screen_sig, 0,
 			cui, NULL, text_screen_process_key,
 			text_screen_post, NULL, text_screen_resize);
 
@@ -219,8 +234,8 @@ void text_screen_init(struct text_screen *screen, struct cui *cui,
 	screen->on_exit = on_exit;
 	screen->need_update = false;
 
-	screen->scr.frame.ltitle = talloc_strdup(screen, title);
-	screen->scr.frame.rtitle = NULL;
-	screen->scr.frame.help = _("x=exit");
-	scrollok(screen->scr.sub_ncw, true);
+	screen->scr->frame.ltitle = talloc_strdup(screen, title);
+	screen->scr->frame.rtitle = NULL;
+	screen->scr->frame.help = _("x=exit");
+	scrollok(screen->scr->sub_ncw, true);
 }

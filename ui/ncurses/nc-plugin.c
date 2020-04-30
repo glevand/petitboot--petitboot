@@ -44,7 +44,7 @@ extern const struct help_text plugin_help_text;
 static void plugin_run_command(void *arg);
 
 struct plugin_screen {
-	struct nc_scr		scr;
+	struct nc_scr		*scr;
 	struct cui		*cui;
 	struct nc_widgetset	*widgetset;
 	WINDOW			*pad;
@@ -90,26 +90,27 @@ static struct plugin_screen *plugin_screen_from_scr(struct nc_scr *scr)
 	struct plugin_screen *screen;
 
 	assert(scr->sig == pb_plugin_screen_sig);
+	assert(scr->container);
 
-	screen = (struct plugin_screen *)
-		((char *)scr - (size_t)&((struct plugin_screen *)0)->scr);
+	screen = scr->container;
 
-	assert(screen->scr.sig == pb_plugin_screen_sig);
+	assert(screen->scr);
+	assert(screen->scr->sig == pb_plugin_screen_sig);
 
 	return screen;
 }
 
 struct nc_scr *plugin_screen_scr(struct plugin_screen *screen)
 {
-	return &screen->scr;
+	return screen->scr;
 }
 
 static void pad_refresh(struct plugin_screen *screen)
 {
 	int y, x, rows, cols;
 
-	getmaxyx(screen->scr.sub_ncw, rows, cols);
-	getbegyx(screen->scr.sub_ncw, y, x);
+	getmaxyx(screen->scr->sub_ncw, rows, cols);
+	getbegyx(screen->scr->sub_ncw, y, x);
 
 	prefresh(screen->pad, screen->scroll_y, 0, y, x, rows, cols);
 }
@@ -122,7 +123,7 @@ static void plugin_screen_widget_focus(struct nc_widget *widget, void *arg)
 	w_height = widget_height(widget);
 	w_focus = widget_focus_y(widget);
 	w_y = widget_y(widget) + w_focus;
-	s_max = getmaxy(screen->scr.sub_ncw) - 1;
+	s_max = getmaxy(screen->scr->sub_ncw) - 1;
 
 	if (w_y < screen->scroll_y)
 		screen->scroll_y = w_y;
@@ -183,7 +184,7 @@ static int plugin_screen_post(struct nc_scr *scr)
 		redrawwin(scr->main_ncw);
 		screen->need_redraw = false;
 	}
-	wrefresh(screen->scr.main_ncw);
+	wrefresh(screen->scr->main_ncw);
 	pad_refresh(screen);
 
 	if (screen->show_auth_run) {
@@ -260,7 +261,7 @@ static void plugin_run_command_check(void *arg)
 	 * from the plugin screen.
 	 */
 	screen->show_auth_run = true;
-	cui_show_auth(screen->cui, screen->scr.main_ncw, false, NULL);
+	cui_show_auth(screen->cui, screen->scr->main_ncw, false, NULL);
 }
 
 static void plugin_screen_setup_widgets(struct plugin_screen *screen)
@@ -371,7 +372,7 @@ static void plugin_screen_draw(struct plugin_screen *screen,
 		repost = true;
 	}
 
-	screen->widgetset = widgetset_create(screen, screen->scr.main_ncw,
+	screen->widgetset = widgetset_create(screen, screen->scr->main_ncw,
 			screen->pad);
 	widgetset_set_widget_focus(screen->widgetset,
 			plugin_screen_widget_focus, screen);
@@ -398,7 +399,7 @@ struct plugin_screen *plugin_screen_init(struct cui *cui,
 	struct plugin_screen *screen = talloc_zero(cui, struct plugin_screen);
 	talloc_set_destructor(screen, plugin_screen_destroy);
 
-	nc_scr_init(&screen->scr, pb_plugin_screen_sig, 0,
+	screen->scr = nc_scr_init(screen, pb_plugin_screen_sig, 0,
 			cui, NULL, plugin_screen_process_key,
 			plugin_screen_post, plugin_screen_unpost,
 			plugin_screen_resize);
@@ -409,14 +410,14 @@ struct plugin_screen *plugin_screen_init(struct cui *cui,
 	screen->label_x = 2;
 	screen->field_x = 25;
 
-	screen->scr.frame.ltitle = talloc_strdup(screen,
+	screen->scr->frame.ltitle = talloc_strdup(screen,
 			_("Petitboot Plugin"));
-	screen->scr.frame.rtitle = NULL;
-	screen->scr.frame.help = talloc_strdup(screen,
+	screen->scr->frame.rtitle = NULL;
+	screen->scr->frame.help = talloc_strdup(screen,
 			_("tab=next, shift+tab=previous, x=exit, h=help"));
-	nc_scr_frame_draw(&screen->scr);
+	nc_scr_frame_draw(screen->scr);
 
-	scrollok(screen->scr.sub_ncw, true);
+	scrollok(screen->scr->sub_ncw, true);
 
 	plugin_screen_draw(screen, item);
 

@@ -147,6 +147,7 @@ struct nc_frame {
 
 struct nc_scr {
 	enum pb_nc_sig sig;
+	void *container;
 	struct cui *cui;
 	struct pmenu *pmenu;
 	struct nc_frame frame;
@@ -158,9 +159,8 @@ struct nc_scr {
 	void (*resize)(struct nc_scr *scr);
 };
 
-int nc_scr_init(struct nc_scr *scr, enum pb_nc_sig sig, int begin_x,
-	struct cui *cui,
-	struct pmenu *pmenu,
+struct nc_scr *nc_scr_init(void *container, enum pb_nc_sig sig, int begin_x,
+	struct cui *cui, struct pmenu *pmenu,
 	void (*process_key)(struct nc_scr *, int),
 	int (*post)(struct nc_scr *),
 	int (*unpost)(struct nc_scr *),

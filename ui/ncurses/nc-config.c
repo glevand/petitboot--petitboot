@@ -45,7 +45,7 @@ enum net_conf_type {
 };
 
 struct config_screen {
-	struct nc_scr		scr;
+	struct nc_scr		*scr;
 	struct cui		*cui;
 	struct nc_widgetset	*widgetset;
 	WINDOW			*pad;
@@ -142,11 +142,12 @@ static struct config_screen *config_screen_from_scr(struct nc_scr *scr)
 	struct config_screen *screen;
 
 	assert(scr->sig == pb_config_screen_sig);
+	assert(scr->container);
 
-	screen = (struct config_screen *)
-		((char *)scr - (size_t)&((struct config_screen *)0)->scr);
+	screen = scr->container;
 
-	assert(screen->scr.sig == pb_config_screen_sig);
+	assert(screen->scr);
+	assert(screen->scr->sig == pb_config_screen_sig);
 
 	return screen;
 }
@@ -155,8 +156,8 @@ static void pad_refresh(struct config_screen *screen)
 {
 	int y, x, rows, cols;
 
-	getmaxyx(screen->scr.sub_ncw, rows, cols);
-	getbegyx(screen->scr.sub_ncw, y, x);
+	getmaxyx(screen->scr->sub_ncw, rows, cols);
+	getbegyx(screen->scr->sub_ncw, y, x);
 
 	prefresh(screen->pad, screen->scroll_y, 0, y, x, rows, cols);
 }
@@ -209,7 +210,7 @@ static int config_screen_unpost(struct nc_scr *scr)
 
 struct nc_scr *config_screen_scr(struct config_screen *screen)
 {
-	return &screen->scr;
+	return screen->scr;
 }
 
 static int screen_process_form(struct config_screen *screen)
@@ -307,9 +308,9 @@ static int screen_process_form(struct config_screen *screen)
 		url = widget_textbox_get_value(screen->widgets.url_f);
 
 		if (!ip || !*ip || !mask || !*mask) {
-			screen->scr.frame.status =
+			screen->scr->frame.status =
 				_("No IP / mask values are set");
-			nc_scr_frame_draw(&screen->scr);
+			nc_scr_frame_draw(screen->scr);
 			talloc_free(config);
 			return -1;
 		}
@@ -401,7 +402,7 @@ static void password_click(void *arg)
 	struct config_screen *screen = arg;
 
 	screen->need_update = true;
-	cui_show_auth(screen->cui, screen->scr.main_ncw, true, NULL);
+	cui_show_auth(screen->cui, screen->scr->main_ncw, true, NULL);
 }
 #endif
 
@@ -413,11 +414,11 @@ static void ok_click(void *arg)
 		if (screen_process_form(screen))
 			/* errors are written to the status line, so we'll need
 			 * to refresh */
-			wrefresh(screen->scr.main_ncw);
+			wrefresh(screen->scr->main_ncw);
 		else
 			screen->exit = true;
 	} else {
-		cui_show_auth(screen->cui, screen->scr.main_ncw, false,
+		cui_show_auth(screen->cui, screen->scr->main_ncw, false,
 				config_screen_config_cb);
 	}
 }
@@ -1257,7 +1258,7 @@ static void config_screen_widget_focus(struct nc_widget *widget, void *arg)
 	w_height = widget_height(widget);
 	w_focus = widget_focus_y(widget);
 	w_y = widget_y(widget) + w_focus;
-	s_max = getmaxy(screen->scr.sub_ncw) - 1;
+	s_max = getmaxy(screen->scr->sub_ncw) - 1;
 
 	if (w_y < screen->scroll_y)
 		screen->scroll_y = w_y;
@@ -1307,7 +1308,7 @@ static void config_screen_draw(struct config_screen *screen,
 		repost = true;
 	}
 
-	screen->widgetset = widgetset_create(screen, screen->scr.main_ncw,
+	screen->widgetset = widgetset_create(screen, screen->scr->main_ncw,
 			screen->pad);
 	widgetset_set_widget_focus(screen->widgetset,
 			config_screen_widget_focus, screen);
@@ -1360,7 +1361,7 @@ static int config_screen_post(struct nc_scr *scr)
 		redrawwin(scr->main_ncw);
 		screen->need_redraw = false;
 	}
-	wrefresh(screen->scr.main_ncw);
+	wrefresh(screen->scr->main_ncw);
 	pad_refresh(screen);
 	return 0;
 }
@@ -1382,7 +1383,7 @@ struct config_screen *config_screen_init(struct cui *cui,
 
 	screen = talloc_zero(cui, struct config_screen);
 	talloc_set_destructor(screen, config_screen_destroy);
-	nc_scr_init(&screen->scr, pb_config_screen_sig, 0,
+	screen->scr = nc_scr_init(screen, pb_config_screen_sig, 0,
 			cui, NULL, config_screen_process_key,
 			config_screen_post, config_screen_unpost,
 			config_screen_resize);
@@ -1396,14 +1397,15 @@ struct config_screen *config_screen_init(struct cui *cui,
 
 	screen->ipmi_override = false;
 
-	screen->scr.frame.ltitle = talloc_strdup(screen,
+	screen->scr->frame.ltitle = talloc_strdup(screen,
 			_("Petitboot System Configuration"));
-	screen->scr.frame.rtitle = NULL;
-	screen->scr.frame.help = talloc_strdup(screen,
+	screen->scr->frame.rtitle = NULL;
+	screen->scr->frame.help = talloc_strdup(screen,
 			_("tab=next, shift+tab=previous, x=exit, h=help"));
-	nc_scr_frame_draw(&screen->scr);
 
-	scrollok(screen->scr.sub_ncw, true);
+	nc_scr_frame_draw(screen->scr);
+
+	scrollok(screen->scr->sub_ncw, true);
 
 	config_screen_draw(screen, config, sysinfo);
 

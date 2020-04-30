@@ -54,7 +54,7 @@ static struct lang {
 };
 
 struct lang_screen {
-	struct nc_scr		scr;
+	struct nc_scr		*scr;
 	struct cui		*cui;
 	struct nc_widgetset	*widgetset;
 	WINDOW			*pad;
@@ -85,11 +85,12 @@ static struct lang_screen *lang_screen_from_scr(struct nc_scr *scr)
 	struct lang_screen *screen;
 
 	assert(scr->sig == pb_lang_screen_sig);
+	assert(scr->container);
 
-	screen = (struct lang_screen *)
-		((char *)scr - (size_t)&((struct lang_screen *)0)->scr);
+	screen = scr->container;
 
-	assert(screen->scr.sig == pb_lang_screen_sig);
+	assert(screen->scr);
+	assert(screen->scr->sig == pb_lang_screen_sig);
 
 	return screen;
 }
@@ -98,8 +99,8 @@ static void pad_refresh(struct lang_screen *screen)
 {
 	int y, x, rows, cols;
 
-	getmaxyx(screen->scr.sub_ncw, rows, cols);
-	getbegyx(screen->scr.sub_ncw, y, x);
+	getmaxyx(screen->scr->sub_ncw, rows, cols);
+	getbegyx(screen->scr->sub_ncw, y, x);
 
 	prefresh(screen->pad, screen->scroll_y, 0, y, x, rows, cols);
 }
@@ -186,7 +187,7 @@ static int lang_screen_post(struct nc_scr *scr)
 
 	widgetset_post(screen->widgetset);
 	nc_scr_frame_draw(scr);
-	wrefresh(screen->scr.main_ncw);
+	wrefresh(screen->scr->main_ncw);
 	pad_refresh(screen);
 	return 0;
 }
@@ -200,7 +201,7 @@ static int lang_screen_unpost(struct nc_scr *scr)
 
 struct nc_scr *lang_screen_scr(struct lang_screen *screen)
 {
-	return &screen->scr;
+	return screen->scr;
 }
 
 static void lang_screen_update_cb(struct nc_scr *scr)
@@ -229,11 +230,11 @@ static void ok_click(void *arg)
 		if (lang_process_form(screen))
 			/* errors are written to the status line, so we'll need
 			 * to refresh */
-			wrefresh(screen->scr.main_ncw);
+			wrefresh(screen->scr->main_ncw);
 		else
 			screen->exit = true;
 	} else {
-		cui_show_auth(screen->cui, screen->scr.main_ncw, false,
+		cui_show_auth(screen->cui, screen->scr->main_ncw, false,
 				lang_screen_update_cb);
 	}
 }
@@ -357,7 +358,7 @@ static void lang_screen_widget_focus(struct nc_widget *widget, void *arg)
 	int w_y, s_max;
 
 	w_y = widget_y(widget) + widget_focus_y(widget);
-	s_max = getmaxy(screen->scr.sub_ncw) - 1;
+	s_max = getmaxy(screen->scr->sub_ncw) - 1;
 
 	if (w_y < screen->scroll_y)
 		screen->scroll_y = w_y;
@@ -390,7 +391,7 @@ static void lang_screen_draw(struct lang_screen *screen,
 		repost = true;
 	}
 
-	screen->widgetset = widgetset_create(screen, screen->scr.main_ncw,
+	screen->widgetset = widgetset_create(screen, screen->scr->main_ncw,
 			screen->pad);
 	widgetset_set_widget_focus(screen->widgetset,
 			lang_screen_widget_focus, screen);
@@ -429,7 +430,7 @@ struct lang_screen *lang_screen_init(struct cui *cui,
 
 	screen = talloc_zero(cui, struct lang_screen);
 	talloc_set_destructor(screen, lang_screen_destroy);
-	nc_scr_init(&screen->scr, pb_lang_screen_sig, 0,
+	screen->scr = nc_scr_init(screen, pb_lang_screen_sig, 0,
 			cui, NULL, lang_screen_process_key,
 			lang_screen_post, lang_screen_unpost,
 			lang_screen_resize);
@@ -439,14 +440,14 @@ struct lang_screen *lang_screen_init(struct cui *cui,
 	screen->label_x = 2;
 	screen->field_x = 17;
 
-	screen->scr.frame.ltitle = talloc_strdup(screen,
+	screen->scr->frame.ltitle = talloc_strdup(screen,
 			_("Petitboot Language Selection"));
-	screen->scr.frame.rtitle = NULL;
-	screen->scr.frame.help = talloc_strdup(screen,
+	screen->scr->frame.rtitle = NULL;
+	screen->scr->frame.help = talloc_strdup(screen,
 			_("tab=next, shift+tab=previous, x=exit"));
-	nc_scr_frame_draw(&screen->scr);
+	nc_scr_frame_draw(screen->scr);
 
-	scrollok(screen->scr.sub_ncw, true);
+	scrollok(screen->scr->sub_ncw, true);
 
 	lang_screen_draw(screen, config);
 
