@@ -768,7 +768,9 @@ struct nc_scr *cui_set_current(struct cui *cui, struct nc_scr *scr)
 {
 	struct nc_scr *old;
 
-	DBGS("%p -> %p\n", cui->current_scr, scr);
+	pb_debug_fl("%s:%p:%d -> %s:%p:%d\n", sig_str(cui->current_scr->sig),
+		cui->current_scr, cui->current_scr->sig,
+		sig_str(scr->sig), scr, scr->sig);
 
 	assert(cui->current_scr != scr);
 
