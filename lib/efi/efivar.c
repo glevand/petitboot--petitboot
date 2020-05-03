@@ -34,7 +34,7 @@
 #include "talloc/talloc.h"
 
 #ifndef EFIVARFS_MAGIC
-#define EFIVARFS_MAGIC 0xde5e81e4
+#define EFIVARFS_MAGIC 0xde5e81e4UL
 #endif
 
 void efi_init_mount(struct efi_mount *efi_mount, const char *path,
@@ -71,7 +71,7 @@ bool efi_check_mount_magic(const struct efi_mount *efi_mount, bool check_magic)
 		return false;
 	}
 
-	if (check_magic && s.f_type != EFIVARFS_MAGIC) {
+	if (check_magic && ((unsigned long)s.f_type != EFIVARFS_MAGIC)) {
 		pb_debug_fn("Bad magic = 0x%lx\n", (unsigned long)s.f_type);
 		return false;
 	}
@@ -182,12 +182,12 @@ int efi_get_variable(void *ctx, const struct efi_mount *efi_mount,
 			if (errno == EAGAIN || errno == EWOULDBLOCK)
 				continue;
 
-			pb_log("%s: read failed %s: (%ld) (%d) %s\n", __func__, path,
+			pb_log("%s: read failed %s: (%zd) (%d) %s\n", __func__, path,
 				count, errno, strerror(errno));
 			goto exit;
 		}
 		if (p >= (buf + sizeof(buf))) {
-			pb_log("%s: buffer full %s: (%ld)\n", __func__, path,
+			pb_log("%s: buffer full %s: (%zd)\n", __func__, path,
 				sizeof(buf));
 			goto exit;
 		}
@@ -241,7 +241,7 @@ int efi_set_variable(const struct efi_mount *efi_mount, const char *name,
 
 	count = write(fd, buf, bufsize);
 	if ((size_t)count != bufsize) {
-		pb_log("%s: write failed %s: (%ld) (%d) %s\n", __func__, name,
+		pb_log("%s: write failed %s: (%zd) (%d) %s\n", __func__, name,
 			count, errno, strerror(errno));
 		goto exit;
 	}
