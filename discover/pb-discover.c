@@ -113,7 +113,7 @@ static int opts_parse(struct opts *opts, int argc, char *argv[])
 	return optind != argc;
 }
 
-static int running;
+static volatile sig_atomic_t running;
 
 static void sigint_handler(int __attribute__((unused)) signum)
 {
