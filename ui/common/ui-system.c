@@ -47,8 +47,8 @@ int pb_start_daemon(void *ctx)
 
 	process = process_create(ctx);
 
-	argv = talloc_array(process, const char *, 2);
-	name = talloc_asprintf(process, "%s/sbin/pb-discover",
+	argv = talloc_array(NULL, const char *, 2);
+	name = talloc_asprintf(argv, "%s/sbin/pb-discover",
 			pb_system_apps.prefix);
 
 	argv[0] = name;
@@ -59,6 +59,7 @@ int pb_start_daemon(void *ctx)
 
 	result = process_run_async(process);
 	process_release(process);
+	talloc_free(argv);
 
 	return result;
 }
