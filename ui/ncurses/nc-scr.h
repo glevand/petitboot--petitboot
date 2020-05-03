@@ -61,6 +61,58 @@ enum pb_nc_sig {
 	pb_removed_sig		= -999,
 };
 
+static inline const char *sig_str(enum pb_nc_sig sig)
+{
+#if !defined(DEBUG)
+	if (0) {
+#endif
+	switch (sig) {
+	case pb_cui_sig:
+		return "cui_sig";
+	case pb_cui_opt_data_sig:
+		return "cui_opt_data_sig";
+	case pb_pmenu_sig:
+		return "pmenu_sig";
+	case pb_item_sig:
+		return "item_sig";
+
+	case pb_screen_sig_min:
+		return "screen_sig_min";
+	case pb_screen_sig:
+		return "screen_sig";
+	case pb_main_screen_sig:
+		return "main_screen_sig";
+	case pb_boot_editor_sig:
+		return "boot_editor_sig";
+	case pb_text_screen_sig:
+		return "text_screen_sig";
+	case pb_config_screen_sig:
+		return "config_screen_sig";
+	case pb_lang_screen_sig:
+		return "lang_screen_sig";
+	case pb_add_url_screen_sig:
+		return "add_url_screen_sig";
+	case pb_subset_screen_sig:
+		return "subset_screen_sig";
+	case pb_plugin_screen_sig:
+		return "plugin_screen_sig";
+	case pb_auth_screen_sig:
+		return "auth_screen_sig";
+	case pb_screen_sig_max:
+		return "screen_sig_max";
+
+	case pb_removed_sig:
+		return "removed_sig";
+	default:
+		pb_debug_fl("ERROR: unknown sig");
+		return "ERROR: unknown sig";
+	}
+#if !defined(DEBUG)
+	}
+	return "";
+#endif
+};
+
 static inline bool scr_sig_check(enum pb_nc_sig sig)
 {
 	return (sig > pb_screen_sig_min && sig < pb_screen_sig_max);
