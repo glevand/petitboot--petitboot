@@ -28,6 +28,7 @@
 #include <i18n/i18n.h>
 #include <log/log.h>
 
+#include "ui/common/discover-client.h"
 #include "nc-cui.h"
 #include "nc-widgets.h"
 #include "nc-auth.h"
@@ -322,4 +323,37 @@ err:
 		talloc_free(screen);
 	}
 	return NULL;
+}
+
+static void auth_boot_cb(struct nc_scr *main_scr)
+{
+	struct pmenu_item *selected;
+	struct pmenu *main_menu;
+
+	assert(main_scr->sig == pb_main_screen_sig);
+
+	main_menu = pmenu_from_scr(main_scr);
+	selected = pmenu_find_selected(main_menu);
+
+	if (selected) {
+		cui_set_current(main_scr->cui, main_scr);
+		cui_boot(selected);
+	}
+}
+
+int auth_boot_check(struct pmenu_item *item)
+{
+	struct cui_opt_data *cod = cod_from_item(item);
+	struct cui *cui = cui_from_item(item);
+
+	if (discover_client_authenticated(cui->client))
+		return cui_boot(item);
+
+	/* Client doesn't need authentication to boot the default option */
+	if (cui->default_item == cod->opt_hash)
+		return cui_boot(item);
+
+	cui_show_auth(cui, item->pmenu->scr->main_ncw, false, auth_boot_cb);
+
+	return 0;
 }
