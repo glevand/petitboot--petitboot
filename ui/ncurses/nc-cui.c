@@ -1648,6 +1648,7 @@ static struct pmenu *main_menu_init(struct cui *cui)
 		return NULL;
 	}
 
+	m->scr->sig = pb_main_screen_sig;
 	m->n_hot_keys = 1;
 	m->hot_keys = talloc_array(m, hot_key_fn, m->n_hot_keys);
 	if (!m->hot_keys) {
