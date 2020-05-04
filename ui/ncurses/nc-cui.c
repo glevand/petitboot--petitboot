@@ -287,7 +287,7 @@ int cui_run_cmd_from_item(struct pmenu_item *item)
  * cui_boot - A generic cb to run kexec.
  */
 
-static int cui_boot(struct pmenu_item *item)
+int cui_boot(struct pmenu_item *item)
 {
 	int result;
 	struct cui *cui = cui_from_item(item);
@@ -382,39 +382,6 @@ static int menu_plugin_execute(struct pmenu_item *item)
 	return 0;
 }
 
-static void cui_boot_cb(struct nc_scr *main_scr)
-{
-	struct pmenu_item *selected;
-	struct pmenu *main_menu;
-
-	assert(main_scr->sig == pb_main_screen_sig);
-
-	main_menu = pmenu_from_scr(main_scr);
-	selected = pmenu_find_selected(main_menu);
-
-	if (selected) {
-		cui_set_current(main_scr->cui, main_scr);
-		cui_boot(selected);
-	}
-}
-
-static int cui_boot_check(struct pmenu_item *item)
-{
-	struct cui_opt_data *cod = cod_from_item(item);
-	struct cui *cui = cui_from_item(item);
-
-	if (discover_client_authenticated(cui->client))
-		return cui_boot(item);
-
-	/* Client doesn't need authentication to boot the default option */
-	if (cui->default_item == cod->opt_hash)
-		return cui_boot(item);
-
-	cui_show_auth(cui, item->pmenu->scr->main_ncw, false, cui_boot_cb);
-
-	return 0;
-}
-
 static void cui_luks_cb(struct nc_scr *scr)
 {
 	struct cui_opt_data *cod;
@@ -476,7 +443,7 @@ static void cui_boot_editor_on_exit(struct cui *cui,
 		}
 
 		item->on_edit = cui_item_edit;
-		item->on_execute = cui_boot_check;
+		item->on_execute = auth_boot_check;
 		item->data = cod;
 
 		talloc_steal(item, cod);
@@ -988,7 +955,7 @@ static int cui_boot_option_add(struct device *dev, struct boot_option *opt,
 		i->on_execute = cui_plugin_install_check;
 	} else {
 		i->on_edit = cui_item_edit;
-		i->on_execute = cui_boot_check;
+		i->on_execute = auth_boot_check;
 	}
 
 	i->data = cod = talloc(i, struct cui_opt_data);

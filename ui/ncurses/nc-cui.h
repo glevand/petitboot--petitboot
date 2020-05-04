@@ -121,6 +121,7 @@ void cui_on_open(struct pmenu *menu);
 int cui_run_cmd(struct cui *cui, const char **cmd_argv);
 int cui_run_cmd_from_item(struct pmenu_item *item);
 void cui_update_language(struct cui *cui, const char *lang);
+int cui_boot(struct pmenu_item *item);
 
 static inline struct cui *cui_from_arg(void *arg)
 {

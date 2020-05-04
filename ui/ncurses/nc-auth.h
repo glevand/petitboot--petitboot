@@ -30,5 +30,6 @@ struct auth_screen *auth_screen_init(struct cui *cui,
 
 struct nc_scr *auth_screen_scr(struct auth_screen *screen);
 struct nc_scr *auth_screen_return_scr(struct auth_screen *screen);
+int auth_boot_check(struct pmenu_item *item);
 
 #endif /* define _NC_AUTH_H */
