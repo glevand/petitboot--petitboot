@@ -382,12 +382,20 @@ static int menu_plugin_execute(struct pmenu_item *item)
 	return 0;
 }
 
-static void cui_boot_cb(struct nc_scr *scr)
+static void cui_boot_cb(struct nc_scr *main_scr)
 {
-	struct pmenu *menu = pmenu_from_scr(scr);
+	struct pmenu_item *selected;
+	struct pmenu *main_menu;
 
-	if (pmenu_find_selected(menu))
-		cui_boot(pmenu_find_selected(menu));
+	assert(main_scr->sig == pb_main_screen_sig);
+
+	main_menu = pmenu_from_scr(main_scr);
+	selected = pmenu_find_selected(main_menu);
+
+	if (selected) {
+		cui_set_current(main_scr->cui, main_scr);
+		cui_boot(selected);
+	}
 }
 
 static int cui_boot_check(struct pmenu_item *item)
