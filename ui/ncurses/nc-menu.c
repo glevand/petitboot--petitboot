@@ -54,11 +54,12 @@ struct pmenu_item *pmenu_find_selected(struct pmenu *menu)
 	return pmenu_item_from_arg(item_userptr(current_item(menu->ncm)));
 }
 
-static int pmenu_post(struct nc_scr *scr)
+int pmenu_post(struct nc_scr *scr)
 {
+	struct pmenu *menu;
 	int result;
-	struct pmenu *menu = pmenu_from_scr(scr);
 
+	menu = pmenu_from_scr(scr);
 	result = post_menu(menu->ncm);
 
 	nc_scr_frame_draw(scr);
@@ -67,12 +68,12 @@ static int pmenu_post(struct nc_scr *scr)
 	return result;
 }
 
-static int pmenu_unpost(struct nc_scr *scr)
+int pmenu_unpost(struct nc_scr *scr)
 {
 	return unpost_menu(pmenu_from_scr(scr)->ncm);
 }
 
-static void pmenu_resize(struct nc_scr *scr)
+void pmenu_resize(struct nc_scr *scr)
 {
 	/* FIXME: menus can't be resized, need to recreate here */
 	pmenu_unpost(scr);
@@ -410,7 +411,7 @@ int pmenu_main_hot_keys(struct pmenu *menu, struct pmenu_item *item, int c)
  * pmenu_process_key - Process a user keystroke.
  */
 
-static void pmenu_process_key(struct nc_scr *scr, int key)
+void pmenu_process_key(struct nc_scr *scr, int key)
 {
 	struct pmenu *menu = pmenu_from_scr(scr);
 	struct pmenu_item *item = pmenu_find_selected(menu);
@@ -578,10 +579,10 @@ static int pmenu_destructor(void *ptr)
  * instance.
  */
 
-struct pmenu *pmenu_init(struct cui *cui, unsigned int item_count,
+struct pmenu *pmenu_init(struct nc_scr *scr, unsigned int item_count,
 	void (*on_exit)(struct pmenu *))
 {
-	struct pmenu *menu = talloc_zero(cui, struct pmenu);
+	struct pmenu *menu = talloc_zero(scr, struct pmenu);
 	if (!menu)
 		return NULL;
 
@@ -594,9 +595,7 @@ struct pmenu *pmenu_init(struct cui *cui, unsigned int item_count,
 		return NULL;
 	}
 
-	menu->scr = nc_scr_init(menu, pb_screen_sig, 0, cui, menu, pmenu_process_key,
-		pmenu_post, pmenu_unpost, pmenu_resize);
-
+	menu->scr = scr;
 	menu->sig = pb_pmenu_sig;
 	menu->item_count = item_count;
 	menu->insert_pt = 0; /* insert from top */

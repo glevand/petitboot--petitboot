@@ -301,10 +301,9 @@ struct add_url_screen *add_url_screen_init(struct cui *cui,
 	screen->field_x = 25;
 	screen->need_redraw = false;
 
-	screen->scr = nc_scr_init(screen, pb_add_url_screen_sig, 0,
-		cui, NULL, add_url_screen_process_key,
-		add_url_screen_post, add_url_screen_unpost,
-		NULL);
+	screen->scr = nc_scr_init(screen, pb_add_url_screen_sig, cui, 0,
+		add_url_screen_process_key, add_url_screen_post,
+		add_url_screen_unpost, NULL);
 
 	screen->scr->frame.ltitle = talloc_strdup(screen,
 			_("Petitboot Config Retrieval"));

@@ -55,7 +55,7 @@ extern const struct help_text plugin_menu_help_text;
 
 static bool cui_detached = false;
 
-static struct pmenu *plugin_menu_init(struct cui *cui);
+	//static struct pmenu *plugin_menu_init(struct nc_scr *scr);
 
 static void cui_cancel_autoboot_on_exit(struct cui *cui);
 static void cui_auth_exit(struct cui *cui);
@@ -385,20 +385,19 @@ static int menu_plugin_execute(struct pmenu_item *item)
 /**
  * pb_mm_init - Setup the main menu instance.
  */
-static struct pmenu *main_menu_init(struct cui *cui)
+static struct pmenu *main_menu_init(struct nc_scr *main_scr)
 {
 	struct pmenu_item *i;
 	struct pmenu *m;
 	int result;
 	bool lockdown = lockdown_active();
 
-	m = pmenu_init(cui, 9, lockdown ? cui_abort_on_exit : cui_on_exit);
+	m = pmenu_init(main_scr, 9, lockdown ? cui_abort_on_exit : cui_on_exit);
 	if (!m) {
 		pb_log_fn("failed\n");
 		return NULL;
 	}
 
-	m->scr->sig = pb_main_screen_sig;
 	m->n_hot_keys = 1;
 	m->hot_keys = talloc_array(m, hot_key_fn, m->n_hot_keys);
 	if (!m->hot_keys) {
@@ -408,13 +407,6 @@ static struct pmenu *main_menu_init(struct cui *cui)
 	}
 	m->hot_keys[0] = pmenu_main_hot_keys;
 	m->on_new = cui_item_new;
-
-	m->scr->frame.ltitle = talloc_asprintf(m,
-		"Petitboot (" PACKAGE_VERSION ")");
-	m->scr->frame.rtitle = NULL;
-	m->scr->frame.help = talloc_strdup(m,
-		_("Enter=accept, e=edit, n=new, x=exit, l=language, g=log, h=help"));
-	m->scr->frame.status = talloc_strdup(m, _("Welcome to Petitboot"));
 
 	/* add a separator */
 	i = pmenu_item_create(m, " ");
@@ -483,14 +475,21 @@ fail_setup:
 static struct nc_scr *main_scr_init(struct cui *cui)
 {
 	struct nc_scr *main_scr;
-	struct pmenu *main_menu;
 
-// FIXME: todo
+	main_scr = nc_scr_init(NULL, pb_screen_sig, cui, 0, pmenu_process_key,
+		pmenu_post, pmenu_unpost, pmenu_resize);
 
-	main_scr = NULL;
-	main_menu = main_menu_init(cui);
+	main_scr->sig = pb_main_screen_sig;
 
-	(void)main_menu;
+	main_scr->frame.ltitle = talloc_asprintf(main_scr,
+		"Petitboot (" PACKAGE_VERSION ")");
+	main_scr->frame.rtitle = NULL;
+	main_scr->frame.help = talloc_strdup(main_scr,
+		_("Enter=accept, e=edit, n=new, x=exit, l=language, g=log, h=help"));
+	main_scr->frame.status = talloc_strdup(main_scr,
+		_("Welcome to Petitboot"));
+
+	main_scr->pmenu = main_menu_init(main_scr);
 
 	return main_scr;
 }
@@ -1660,7 +1659,8 @@ void cui_update_language(struct cui *cui, const char *lang)
 
 	talloc_free(cui->main_scr->pmenu);
 	cui->main_scr = main_scr_init(cui);
-	cui->plugin_menu = plugin_menu_init(cui);
+	
+	//cui->plugin_scr = plugin_scr_init(cui);
 
 	if (repost_menu) {
 		cui->current_scr = cui->main_scr;
@@ -1730,19 +1730,13 @@ void cui_send_reinit(struct cui *cui)
 /*
  * plugin_menu_init: Set up the plugin menu instance
  */
-static struct pmenu *plugin_menu_init(struct cui *cui)
+static struct pmenu *plugin_menu_init(struct nc_scr *scr)
 {
 	struct pmenu_item *i;
 	struct pmenu *m;
 	int result;
 
-	m = pmenu_init(cui, 2, cui_plugin_menu_exit);
-	m->scr->frame.ltitle = talloc_asprintf(m, _("Petitboot Plugins"));
-	m->scr->frame.rtitle = talloc_asprintf(m, "%s", "");
-	m->scr->frame.help = talloc_strdup(m,
-		_("Enter=install, e=details, x=exit, h=help"));
-	m->scr->frame.status = talloc_asprintf(m,
-			_("Available Petitboot Plugins"));
+	m = pmenu_init(scr, 2, cui_plugin_menu_exit);
 
 	/* add a separator */
 	i = pmenu_item_create(m, " ");
@@ -1769,6 +1763,26 @@ static struct pmenu *plugin_menu_init(struct cui *cui)
 fail_setup:
 	talloc_free(m);
 	return NULL;
+}
+
+static struct nc_scr *plugin_scr_init(struct cui *cui)
+{
+	struct nc_scr *scr;
+	struct pmenu *m;
+
+	scr = NULL;
+	(void)cui;
+
+	m = plugin_menu_init(scr);
+
+	m->scr->frame.ltitle = talloc_asprintf(m, _("Petitboot Plugins"));
+		m->scr->frame.rtitle = talloc_asprintf(m, "%s", "");
+		m->scr->frame.help = talloc_strdup(m,
+			_("Enter=install, e=details, x=exit, h=help"));
+		m->scr->frame.status = talloc_asprintf(m,
+				_("Available Petitboot Plugins"));
+
+	return scr;
 }
 
 static struct discover_client_ops cui_client_ops = {
@@ -1891,9 +1905,9 @@ struct cui *cui_init(int timeout)
 	if (!cui->main_scr)
 		goto fail_client_init;
 
-	cui->plugin_menu = plugin_menu_init(cui);
-	if (!cui->plugin_menu)
-		goto fail_client_init;
+	//cui->plugin_menu = plugin_menu_init(cui);
+	//if (!cui->plugin_menu)
+	//	goto fail_client_init;
 
 	waiter_register_io(cui->waitset, STDIN_FILENO, WAIT_IN,
 			(waiter_cb)cui_process_key, cui);

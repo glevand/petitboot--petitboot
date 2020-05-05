@@ -283,10 +283,9 @@ struct subset_screen *subset_screen_init(struct cui *cui,
 
 	screen->return_scr = current_scr;
 
-	screen->scr = nc_scr_init(screen, pb_subset_screen_sig, 0,
-		cui, NULL, subset_screen_process_key,
-		subset_screen_post, subset_screen_unpost,
-		NULL);
+	screen->scr = nc_scr_init(screen, pb_subset_screen_sig, cui, 0,
+		subset_screen_process_key, subset_screen_post,
+		subset_screen_unpost, NULL);
 
 	screen->scr->frame.ltitle = talloc_strdup(screen,
 			title_suffix);
