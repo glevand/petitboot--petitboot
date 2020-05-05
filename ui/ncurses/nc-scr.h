@@ -153,18 +153,19 @@ struct nc_scr {
 	struct nc_frame frame;
 	WINDOW *main_ncw;
 	WINDOW *sub_ncw;
+	void (*process_key)(struct nc_scr *scr, int key);
 	int (*post)(struct nc_scr *scr);
 	int (*unpost)(struct nc_scr *scr);
-	void (*process_key)(struct nc_scr *scr, int key);
 	void (*resize)(struct nc_scr *scr);
 };
 
-struct nc_scr *nc_scr_init(void *container, enum pb_nc_sig sig, int begin_x,
-	struct cui *cui, struct pmenu *pmenu,
-	void (*process_key)(struct nc_scr *, int),
-	int (*post)(struct nc_scr *),
-	int (*unpost)(struct nc_scr *),
-	void (*resize)(struct nc_scr *));
+struct nc_scr *nc_scr_init(void *container, enum pb_nc_sig sig,
+	struct cui *cui, int begin_x,
+	void (*process_key)(struct nc_scr *scr, int key),
+	int (*post)(struct nc_scr *scr),
+	int (*unpost)(struct nc_scr *scr),
+	void (*resize)(struct nc_scr *scr));
+
 void nc_scr_status_free(struct nc_scr *scr);
 void nc_scr_status_printf(struct nc_scr *scr, const char *format, ...);
 void nc_scr_frame_draw(struct nc_scr *scr);

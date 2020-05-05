@@ -669,9 +669,9 @@ struct boot_editor *boot_editor_init(struct cui *cui,
 	boot_editor->label_x = 1;
 	boot_editor->field_x = 2 + max(max(ncols1, ncols2), ncols3);
 
-	boot_editor->scr = nc_scr_init(boot_editor, pb_boot_editor_sig, 0,
-			cui, NULL, boot_editor_process_key,
-		boot_editor_post, boot_editor_unpost, boot_editor_resize);
+	boot_editor->scr = nc_scr_init(boot_editor, pb_boot_editor_sig, cui, 0,
+		boot_editor_process_key, boot_editor_post, boot_editor_unpost,
+		boot_editor_resize);
 
 	boot_editor->scr->frame.ltitle = talloc_strdup(boot_editor,
 			_("Petitboot Option Editor"));

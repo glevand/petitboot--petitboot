@@ -1383,10 +1383,9 @@ struct config_screen *config_screen_init(struct cui *cui,
 
 	screen = talloc_zero(cui, struct config_screen);
 	talloc_set_destructor(screen, config_screen_destroy);
-	screen->scr = nc_scr_init(screen, pb_config_screen_sig, 0,
-			cui, NULL, config_screen_process_key,
-			config_screen_post, config_screen_unpost,
-			config_screen_resize);
+	screen->scr = nc_scr_init(screen, pb_config_screen_sig, cui, 0,
+		config_screen_process_key, config_screen_post,
+		config_screen_unpost, config_screen_resize);
 
 	screen->cui = cui;
 	screen->on_exit = on_exit;

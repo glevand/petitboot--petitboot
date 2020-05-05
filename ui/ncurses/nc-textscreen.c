@@ -222,9 +222,9 @@ static int text_screen_post(struct nc_scr *scr)
 void text_screen_init(struct text_screen *screen, struct cui *cui,
 		const char *title, void (*on_exit)(struct cui *))
 {
-	screen->scr = nc_scr_init(screen, pb_text_screen_sig, 0,
-			cui, NULL, text_screen_process_key,
-			text_screen_post, NULL, text_screen_resize);
+	screen->scr = nc_scr_init(screen, pb_text_screen_sig, cui, 0,
+			text_screen_process_key, text_screen_post,
+			NULL, text_screen_resize);
 
 	/* this will establish our array of lines */
 	screen->lines = NULL;
