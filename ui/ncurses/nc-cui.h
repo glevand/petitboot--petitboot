@@ -57,7 +57,7 @@ struct cui {
 	sig_atomic_t abort;
 	sig_atomic_t resize;
 	struct nc_scr *current_scr;
-	struct pmenu *main;
+	struct nc_scr *main_scr;
 	struct pmenu *plugin_menu;
 	unsigned int n_plugins;
 	struct waitset *waitset;
