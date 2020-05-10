@@ -144,11 +144,15 @@ static int add_url_screen_post(struct nc_scr *scr)
 {
 	struct add_url_screen *screen = add_url_screen_from_scr(scr);
 
-	if (screen->exit)
-		screen->on_exit(screen->cui);
-
 	widgetset_post(screen->widgetset);
+
+	if (screen->exit) {
+		screen->on_exit(screen->cui);
+		return 0;
+	}
+
 	nc_scr_frame_draw(scr);
+
 	if (screen->need_redraw) {
 		redrawwin(scr->main_ncw);
 		screen->need_redraw = false;
