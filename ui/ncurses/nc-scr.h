@@ -113,6 +113,12 @@ static inline const char *sig_str(enum pb_nc_sig sig)
 #endif
 };
 
+#define pb_debug_scr_sig(_scr1) pb_debug_fl("%s:%p:%d\n", \
+	sig_str(_scr1->sig), _scr1, _scr1->sig)
+#define pb_debug_scr_sig_cmp(_scr1, _scr2) pb_debug_fl("%s:%p:%d -> %s:%p:%d\n", \
+	sig_str(_scr1->sig), _scr1, _scr1->sig, \
+	sig_str(_scr2->sig), _scr2, _scr2->sig)
+
 static inline bool scr_sig_check(enum pb_nc_sig sig)
 {
 	return (sig > pb_screen_sig_min && sig < pb_screen_sig_max);
