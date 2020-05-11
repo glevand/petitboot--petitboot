@@ -92,6 +92,14 @@ if PLATFORM_POWERPC
 discover_platform_ro_SOURCES += discover/platform-powerpc.c
 endif
 
+if PLATFORM_PS3
+discover_platform_ro_SOURCES += \
+	lib/platform/ps3.c \
+	lib/platform/ps3.h \
+	discover/platform-ps3.c
+discover_platform_ro_LDADD = -lps3-utils
+endif
+
 # Build dummy last to put it at the end of the platforms section.
 discover_platform_ro_SOURCES += discover/platform-dummy.c
 
