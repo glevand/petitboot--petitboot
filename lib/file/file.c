@@ -20,6 +20,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 
@@ -126,33 +127,44 @@ int read_file(void *ctx, const char *filename, char **bufp, int *lenp)
 	char *buf;
 
 	fd = open(filename, O_RDONLY);
-	if (fd < 0)
+	if (fd < 0) {
+		pb_debug_fn("open failed: '%s'\n", filename);
 		return -1;
+	}
 
 	rc = fstat(fd, &statbuf);
-	if (rc < 0)
+	if (rc < 0) {
+		pb_debug_fn("fstat failed: '%s'\n", filename);
 		goto err_close;
+	}
 
 	len = statbuf.st_size;
-	if (len > max_file_size)
+	if (len > max_file_size) {
+		pb_debug_fn("bad size failed: '%s'\n", filename);
 		goto err_close;
+	}
 
 	buf = talloc_array(ctx, char, len + 1);
-	if (!buf)
+	if (!buf) {
+		pb_debug_fn("talloc failed: '%s'\n", filename);
 		goto err_close;
+	}
 
 	for (i = 0; i < len; i += rc) {
 		rc = read(fd, buf + i, len - i);
 
 		/* unexpected EOF: trim and return */
 		if (rc == 0) {
+			pb_debug_fn("unexpected EOF '%s'\n", filename);
 			len = i;
 			break;
 		}
 
-		if (rc < 0)
+		if (rc < 0) {
+			pb_debug_fn("read failed '%s': %s\n", filename,
+				strerror(errno));
 			goto err_free;
-
+		}
 	}
 
 	buf[len] = '\0';
