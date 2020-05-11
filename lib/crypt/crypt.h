@@ -17,14 +17,12 @@
 #include "config.h"
 
 #ifdef CRYPT_SUPPORT
-
 char *crypt_get_hash(void *ctx);
 bool crypt_check_password(const char *password);
 int crypt_set_password(void *ctx, const char *password);
 int crypt_set_password_hash(void *ctx, const char *hash);
 
 #else
-
 static inline char *crypt_get_hash(void *ctx __attribute__((unused)))
 {
 	return NULL;

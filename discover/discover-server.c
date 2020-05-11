@@ -300,10 +300,12 @@ static int discover_server_handle_auth_message(struct client *client,
 	char *hash;
 	int rc = 0;
 
+	pb_debug_fl("->\n");
 	status = talloc_zero(client, struct status);
 
 	switch (auth_msg->op) {
 	case AUTH_MSG_REQUEST:
+		pb_debug_fl("AUTH_MSG_REQUEST\n");
 		if (!crypt_check_password(auth_msg->password)) {
 			rc = -1;
 			pb_log("Client failed to authenticate\n");
@@ -327,6 +329,7 @@ static int discover_server_handle_auth_message(struct client *client,
 		}
 		break;
 	case AUTH_MSG_SET:
+		pb_debug_fl("AUTH_MSG_SET\n");
 		if (client->server->restrict_clients) {
 			if (!crypt_check_password(auth_msg->set_password.password)) {
 				rc = -1;
@@ -366,6 +369,7 @@ static int discover_server_handle_auth_message(struct client *client,
 		}
 		break;
 	case AUTH_MSG_DECRYPT:
+		pb_debug_fl("AUTH_MSG_DECRYPT\n");
 		if (!client->can_modify) {
 			pb_log("Unauthenticated client tried to open encrypted device %s\n",
 					auth_msg->decrypt_dev.device_id);
@@ -386,10 +390,13 @@ static int discover_server_handle_auth_message(struct client *client,
 		break;
 	}
 
-	if (status->message)
+	if (status->message) {
+		pb_debug_fl("%s\n", status->message);
 		write_boot_status_message(client->server, client, status);
+	}
 	talloc_free(status);
 
+	pb_debug_fl("<-\n");
 	return rc;
 }
 
@@ -405,6 +412,7 @@ static int discover_server_process_message(void *arg)
 	char *url;
 	int rc = 0;
 
+	pb_debug_fl("->\n");
 	message = pb_protocol_read_message(client, client->fd);
 
 	if (!message) {
@@ -412,6 +420,7 @@ static int discover_server_process_message(void *arg)
 		return 0;
 	}
 
+	pb_debug_fl("can_modify: %d\n", client->can_modify);
 	/*
 	 * If crypt support is enabled, non-authorised clients can only delay
 	 * boot, not configure options or change the default boot option.
@@ -571,6 +580,8 @@ static int discover_server_process_connection(void *arg)
 	struct ucred ucred;
 	socklen_t len;
 
+	pb_debug_fl("->\n");
+
 	/* accept the incoming connection */
 	fd = accept(server->socket, NULL, NULL);
 	if (fd < 0) {
@@ -595,6 +606,7 @@ static int discover_server_process_connection(void *arg)
 	 * run as root allow them to make changes
 	 */
 	if (server->restrict_clients) {
+		pb_debug_fl("can_modify: %d\n", client->can_modify);
 		len = sizeof(struct ucred);
 		rc = getsockopt(client->fd, SOL_SOCKET, SO_PEERCRED, &ucred,
 				&len);
@@ -606,8 +618,11 @@ static int discover_server_process_connection(void *arg)
 					ucred.pid, ucred.uid, ucred.gid);
 			client->can_modify = ucred.uid == 0;
 		}
-	} else
+	} else {
+		pb_debug_fl("can_modify: %d\n", client->can_modify);
 		client->can_modify = true;
+	}
+		pb_debug_fl("can_modify: %d\n", client->can_modify);
 
 	/* send auth status to client */
 	rc = write_authenticate_message(server, client);

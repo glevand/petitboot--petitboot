@@ -297,13 +297,17 @@ int cui_boot(struct pmenu_item *item)
 
 	nc_scr_status_printf(cui->current_scr, _("Booting %s..."), cod->name);
 
+	pb_debug_fl("discover_client_boot ->\n");
 	result = discover_client_boot(cui->client, NULL, cod->opt, cod->bd);
+	pb_debug_fl("discover_client_boot <-\n");
 
 	if (result) {
+		pb_debug_fl("Failed: boot %s\n", cod->bd->image);
 		nc_scr_status_printf(cui->current_scr,
 				_("Failed: boot %s"), cod->bd->image);
 	}
 
+	pb_debug_fl("< %s\n", cod->bd->image);
 	return 0;
 }
 
