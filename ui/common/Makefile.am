@@ -23,9 +23,3 @@ ui_common_libpbui_la_SOURCES = \
 	ui/common/timer.h \
 	ui/common/ui-system.c \
 	ui/common/ui-system.h
-
-if PLATFORM_PS3
-ui_common_libpbui_la_SOURCES += \
-	ui/common/ps3.c \
-	ui/common/ps3.h
-endif
