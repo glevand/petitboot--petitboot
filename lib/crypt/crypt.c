@@ -201,6 +201,8 @@ bool crypt_check_password(const char *password)
 	struct spwd *shadow;
 	char *hash;
 
+	pb_debug_fl("->\n");
+
 	shadow = getspnam("root");
 	if (!shadow) {
 		pb_log("Could not find root shadow\n");

@@ -13,6 +13,7 @@ static struct interface_config *config_copy_interface(struct config *ctx,
 	struct interface_config *dest = talloc_zero(ctx,
 						struct interface_config);
 
+	pb_debug_fl("->\n");
 	memcpy(dest->hwaddr, src->hwaddr, sizeof(src->hwaddr));
 	dest->ignore = src->ignore;
 

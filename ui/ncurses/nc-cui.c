@@ -346,27 +346,34 @@ static int menu_reinit_execute(struct pmenu_item *item)
 {
 	struct cui *cui = cui_from_item(item);
 
+	pb_debug_fl("->\n");
 	if (!cui->client)
 		return 0;
 
+	pb_debug_fl("\n");
 	/* If we don't need to authenticate, send the reinit immediately */
 	if (discover_client_authenticated(cui->client)) {
 		cui_send_reinit(cui);
 		return 0;
 	}
 
+	pb_debug_fl("\n");
 	if (!cui->current_scr)
 		return 0;
 
+	pb_debug_fl("\n");
 	if (cui->auth_screen)
 		return 0;
 
+	pb_debug_fl("\n");
 	cui->auth_screen = auth_screen_init(cui, cui->current_scr->main_ncw,
 			false, NULL, menu_reinit_cb, cui_auth_exit);
+	pb_debug_fl("\n");
 
 	if (cui->auth_screen)
 		cui_set_current(cui, auth_screen_scr(cui->auth_screen));
 
+	pb_debug_fl("<-\n");
 	return 0;
 }
 

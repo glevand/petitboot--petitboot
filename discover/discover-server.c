@@ -563,6 +563,8 @@ void discover_server_set_auth_mode(struct discover_server *server,
 {
 	struct client *client;
 
+	pb_debug_fl("restrict_clients = %d = %s\n", restrict_clients, restrict_clients ? "true" : "false");
+
 	server->restrict_clients = restrict_clients;
 
 	list_for_each_entry(&server->clients, client, list) {
