@@ -30,6 +30,7 @@ static inline char *crypt_get_hash(void *ctx __attribute__((unused)))
 static inline bool crypt_check_password(
 		const char *password __attribute__((unused)))
 {
+	pb_debug_fl("no crypt support\n");
 	return false;
 }
 static inline int crypt_set_password(void *ctx __attribute__((unused)),

@@ -225,6 +225,7 @@ static int screen_process_form(struct config_screen *screen)
 	unsigned int *order, idx;
 	char mac[20];
 
+	pb_debug_fl("->\n");
 	config = config_copy(screen, screen->cui->config);
 
 	talloc_free(config->autoboot_opts);

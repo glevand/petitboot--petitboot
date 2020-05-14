@@ -321,6 +321,8 @@ static int config_parse_one_interface(struct config *config, char *confstr)
 	struct interface_config *ifconf;
 	char *tok, *tok_gw, *tok_url, *saveptr;
 
+	pb_debug_fl("->\n");
+
 	ifconf = talloc_zero(config, struct interface_config);
 
 	if (!confstr || !strlen(confstr))
