@@ -55,6 +55,23 @@ int nc_scr_unpost(struct nc_scr *scr)
 	return 0;
 }
 
+void nc_scr_set_default_rtitle(struct nc_scr *scr,
+	const struct system_info *sysinfo)
+{
+	struct nc_frame *frame = &scr->frame;
+
+	assert(frame);
+
+	if (frame->rtitle)
+		talloc_free(frame->rtitle);
+
+	frame->rtitle = talloc_strdup(scr, sysinfo->type);
+
+	if (sysinfo->identifier)
+		frame->rtitle = talloc_asprintf_append(frame->rtitle,
+				" %s", sysinfo->identifier);
+}
+
 void nc_scr_frame_draw(struct nc_scr *scr)
 {
 	int ltitle_len, rtitle_len, help_len;

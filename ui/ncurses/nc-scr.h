@@ -34,6 +34,8 @@
 #  error "Curses header file not found."
 #endif
 
+#include "types/types.h"
+
 #define DBG(fmt, args...) pb_debug("DBG: " fmt, ## args)
 #define DBGS(fmt, args...) \
 	pb_debug("DBG:%s:%d: " fmt, __func__, __LINE__, ## args)
@@ -176,6 +178,8 @@ struct nc_scr *nc_scr_init(void *container, enum pb_nc_sig sig,
 void nc_scr_status_free(struct nc_scr *scr);
 void nc_scr_status_printf(struct nc_scr *scr, const char *format, ...);
 void nc_scr_frame_draw(struct nc_scr *scr);
+void nc_scr_set_default_rtitle(struct nc_scr *scr,
+	const struct system_info *sysinfo);
 
 int nc_scr_post(struct nc_scr *scr);
 int nc_scr_unpost(struct nc_scr *scr);
