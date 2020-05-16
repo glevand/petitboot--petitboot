@@ -1398,9 +1398,10 @@ struct config_screen *config_screen_init(struct cui *cui,
 
 	screen->scr->frame.ltitle = talloc_strdup(screen,
 			_("Petitboot System Configuration"));
-	screen->scr->frame.rtitle = NULL;
 	screen->scr->frame.help = talloc_strdup(screen,
 			_("tab=next, shift+tab=previous, x=exit, h=help"));
+
+	nc_scr_set_default_rtitle(screen->scr, cui->sysinfo);
 
 	nc_scr_frame_draw(screen->scr);
 

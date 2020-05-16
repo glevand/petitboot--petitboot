@@ -61,6 +61,11 @@ void nc_scr_set_default_rtitle(struct nc_scr *scr,
 	struct nc_frame *frame = &scr->frame;
 
 	assert(frame);
+	
+	if (!sysinfo) {
+		pb_debug_fl("no sysinfo\n");
+		return;
+	}
 
 	if (frame->rtitle)
 		talloc_free(frame->rtitle);
