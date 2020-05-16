@@ -1645,26 +1645,8 @@ static int cui_plugins_remove(void *arg)
 
 static void cui_update_mm_title(struct cui *cui)
 {
-	struct nc_frame *frame = &cui->main_scr->frame;
-
-	talloc_free(frame->rtitle);
-
-	frame->rtitle = talloc_strdup(cui->main_scr->pmenu, cui->sysinfo->type);
-	if (cui->sysinfo->identifier)
-		frame->rtitle = talloc_asprintf_append(frame->rtitle,
-				" %s", cui->sysinfo->identifier);
-
-	if (cui->current_scr == cui->main_scr)
-		nc_scr_post(cui->current_scr);
-
-	frame = &cui->plugin_scr->frame;
-
-	talloc_free(frame->rtitle);
-
-	frame->rtitle = talloc_strdup(cui->main_scr->pmenu, cui->sysinfo->type);
-	if (cui->sysinfo->identifier)
-		frame->rtitle = talloc_asprintf_append(frame->rtitle,
-				" %s", cui->sysinfo->identifier);
+	nc_scr_set_default_rtitle(cui->main_scr, cui->sysinfo);
+	nc_scr_set_default_rtitle(cui->plugin_scr, cui->sysinfo);
 
 	if (cui->current_scr == cui->main_scr)
 		nc_scr_post(cui->current_scr);
