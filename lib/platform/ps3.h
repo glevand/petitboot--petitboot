@@ -19,6 +19,7 @@
 #if !defined(_PB_COMMON_PS3_H)
 #define _PB_COMMON_PS3_H
 
+#include <stdbool.h>
 #include <stdint.h>
 
 int ps3_get_video_mode(unsigned int *mode_id);
@@ -39,6 +40,7 @@ enum ps3_timeouts {
 
 /**
  * struct ps3_flash_values - Values from PS3 flash memory.
+ * @dirty: Data changed flag.
  * @default_item: The default menu item.
  * @timeout: The timeout in seconds.
  * @video_mode: The default video_mode.
@@ -46,6 +48,7 @@ enum ps3_timeouts {
  */
 
 struct ps3_flash_values {
+	bool dirty;
 	uint32_t default_item;
 	uint16_t video_mode;
 	/* uint16_t flags; */
@@ -53,6 +56,7 @@ struct ps3_flash_values {
 };
 
 static const struct ps3_flash_values ps3_flash_defaults = {
+	.dirty = false,
 	.default_item = 0,
 	.video_mode = 1,
 	.timeout = ps3_timeout_forever,

@@ -149,7 +149,8 @@ int ps3_flash_get_values(struct ps3_flash_values *values)
 	pb_debug("%s: video_mode:   %u\n", __func__,
 		(unsigned int)values->video_mode);
 fail:
-	return (result || sum) ? -1 : 0;
+	values->dirty = (result || sum);
+	return values->dirty ? -1 : 0;
 }
 
 /**
@@ -163,6 +164,10 @@ int ps3_flash_set_values(const struct ps3_flash_values *values)
 {
 	int result;
 	struct ps3_flash_ctx fc;
+
+	if (!values->dirty) {
+		pb_debug("%s: Writing clean values\n", __func__);
+	}
 
 	pb_debug("%s: default_item: %u\n", __func__, values->default_item);
 	pb_debug("%s: video_mode:   %u\n", __func__, values->video_mode);
@@ -198,6 +203,7 @@ int ps3_flash_set_values(const struct ps3_flash_values *values)
 	result += os_area_db_write(&fc.db, &fc.header, fc.dev);
 
 	ps3_flash_close(&fc);
+
 	return result;
 
 fail:
