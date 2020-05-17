@@ -244,7 +244,7 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	cui = cui_init(NULL, NULL, 0, opts.timeout);
+	cui = cui_init(opts.timeout);
 	if (!cui)
 		return EXIT_FAILURE;
 
