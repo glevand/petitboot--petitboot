@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: petitboot 20140623-g89bd2ed2-dirty\n"
 "Report-Msgid-Bugs-To: https://lists.ozlabs.org/listinfo/petitboot\n"
-"POT-Creation-Date: 2018-11-29 10:59+1100\n"
+"POT-Creation-Date: 2020-05-18 15:06-0700\n"
 "PO-Revision-Date: 2014-06-24 13:56+0800\n"
 "Last-Translator: Jeremy Kerr <jk@ozlabs.org>\n"
 "Language-Team: Russian\n"
@@ -16,6 +16,30 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+
+#, fuzzy
+msgid "decryption failed"
+msgstr "Не удалось расшифровать"
+
+#, fuzzy
+msgid "signature verification failed"
+msgstr "Подпись не прошла проверку"
+
+#, fuzzy
+msgid "invalid signature configuration"
+msgstr "Неправильная конфигурация подписи"
+
+#, fuzzy
+msgid "unknown verification failure"
+msgstr "Подпись не прошла проверку"
+
+#, fuzzy, c-format
+msgid "Boot verification failure: %s"
+msgstr "Подпись не прошла проверку"
+
+#, fuzzy, c-format
+msgid "kexec load failed: %s"
+msgstr "kexec load failed"
 
 msgid "Running boot hooks"
 msgstr "Выполнение привязок загрузки"
@@ -30,15 +54,6 @@ msgstr "Не удалось загрузить %s из %s"
 
 msgid "Performing kexec load"
 msgstr "Выполнение загрузки kexec"
-
-msgid "Decryption failed"
-msgstr "Не удалось расшифровать"
-
-msgid "Signature verification failed"
-msgstr "Подпись не прошла проверку"
-
-msgid "Invalid signature configuration"
-msgstr "Неправильная конфигурация подписи"
 
 msgid "Performing kexec reboot"
 msgstr "Выполнение перезагрузки kexec"
@@ -116,6 +131,14 @@ msgstr ""
 
 #, c-format
 msgid "Applying temporary autoboot override: %s"
+msgstr ""
+
+#, c-format
+msgid "Failed to open encrypted device %s"
+msgstr ""
+
+#, c-format
+msgid "Encrypted device %s does not exist"
 msgstr ""
 
 #. TRANSLATORS: this string will be passed the type of the
@@ -214,6 +237,10 @@ msgstr "CD/DVD"
 
 msgid "Any"
 msgstr "Любой"
+
+#, fuzzy
+msgid "Encrypted Device"
+msgstr "Любое устройство:"
 
 msgid "Retrieve Config"
 msgstr "Получение конфигурации"
@@ -336,6 +363,13 @@ msgstr "Опция очистки:"
 msgid "Clear IPMI override now"
 msgstr "Очистить переопределение IPMI"
 
+msgid "IPMI boot order mailbox config present"
+msgstr ""
+
+#, fuzzy
+msgid "Clear IPMI boot order mailbox now"
+msgstr "Очистить переопределение IPMI"
+
 msgid "Network:"
 msgstr "Сеть:"
 
@@ -415,6 +449,13 @@ msgstr "Задание вручную: '%s'"
 msgid "Current interface: %s"
 msgstr "Текущий интерфейс: %s"
 
+msgid "Update system password"
+msgstr ""
+
+#, fuzzy
+msgid "Pre-boot check:"
+msgstr "Справка по Petitboot"
+
 msgid "Petitboot System Configuration"
 msgstr "Конфигурация Petitboot System"
 
@@ -437,36 +478,6 @@ msgstr "Загружается %s..."
 msgid "Failed: boot %s"
 msgstr "Не удалось: загрузиться %s"
 
-#, c-format
-msgid "User item %u"
-msgstr "Пользовательский элемент %u"
-
-#, c-format
-msgid "Plugins (%u)"
-msgstr "Модули (%u)"
-
-#, c-format
-msgid "  %s [installed]"
-msgstr ""
-
-msgid "Plugins (0)"
-msgstr "Модули (0)"
-
-#, c-format
-msgid "SAFE MODE: select '%s' to continue"
-msgstr "БЕЗОПАСНЫЙ РЕЖИМ: чтобы продолжить, выберите '%s'"
-
-msgid "Rescan devices"
-msgstr "Заново сканировать устройства"
-
-msgid "Enter=accept, e=edit, n=new, x=exit, l=language, g=log, h=help"
-msgstr ""
-"Enter=принять, e=редактировать, n=новый, x=выход, l=язык, g=протокол, "
-"h=справка"
-
-msgid "Welcome to Petitboot"
-msgstr "Вас приветствует Petitboot"
-
 msgid "System information"
 msgstr "Информация о системе"
 
@@ -476,8 +487,14 @@ msgstr "Конфигурация системы"
 msgid "System status log"
 msgstr "Протокол состояния системы"
 
+msgid "Rescan devices"
+msgstr "Заново сканировать устройства"
+
 msgid "Retrieve config from URL"
 msgstr "Получение конфигурации по URL"
+
+msgid "Plugins (0)"
+msgstr "Модули (0)"
 
 msgid "Reboot"
 msgstr "Перезагрузить"
@@ -488,6 +505,20 @@ msgstr "Выйти в оболочку"
 msgid "main menu"
 msgstr "главное меню"
 
+msgid "Enter=accept, e=edit, n=new, x=exit, l=language, g=log, h=help"
+msgstr ""
+"Enter=принять, e=редактировать, n=новый, x=выход, l=язык, g=протокол, "
+"h=справка"
+
+msgid "Welcome to Petitboot"
+msgstr "Вас приветствует Petitboot"
+
+msgid "Return to Main Menu"
+msgstr ""
+
+msgid "plugin menu"
+msgstr "меню модуля"
+
 msgid "Petitboot Plugins"
 msgstr "Модули Petitboot"
 
@@ -497,11 +528,28 @@ msgstr "Enter=установить, e=сведения, x=выход, h=спра
 msgid "Available Petitboot Plugins"
 msgstr "Доступные модули Petitboot"
 
-msgid "Return to Main Menu"
+#, c-format
+msgid "User item %u"
+msgstr "Пользовательский элемент %u"
+
+msgid "Failed to send install request"
+msgstr "Не удалось отправить запрос на установку"
+
+#, c-format
+msgid "Installing plugin %s"
+msgstr "Установка модуля %s"
+
+#, c-format
+msgid "Plugins (%u)"
+msgstr "Модули (%u)"
+
+#, c-format
+msgid "  %s [installed]"
 msgstr ""
 
-msgid "plugin menu"
-msgstr "меню модуля"
+#, c-format
+msgid "SAFE MODE: select '%s' to continue"
+msgstr "БЕЗОПАСНЫЙ РЕЖИМ: чтобы продолжить, выберите '%s'"
 
 #, c-format
 msgid "%s: alloc cui failed.\n"
@@ -510,10 +558,6 @@ msgstr "%s: не удалось запустить alloc cui.\n"
 #, c-format
 msgid "%s: error: discover_client_init failed.\n"
 msgstr "%s: ошибка: не удалось запустить discover_client_init.\n"
-
-#, c-format
-msgid "could not start pb-discover, the petitboot daemon.\n"
-msgstr "не могу запустить pb-discover, демон petitboot.\n"
 
 #, c-format
 msgid "check that pb-discover, the petitboot daemon is running.\n"
@@ -532,6 +576,9 @@ msgstr "Язык"
 #, c-format
 msgid "Unknown language '%s'"
 msgstr "Неизвестный язык '%s'"
+
+msgid "Save changes?"
+msgstr ""
 
 msgid "Petitboot Language Selection"
 msgstr "Выбор языка в Petitboot"
@@ -560,6 +607,30 @@ msgstr "Версии основной платформы:"
 
 msgid "Alternate platform versions:"
 msgstr "Версии альтернативной платформы:"
+
+msgid "Secure & trusted boot"
+msgstr ""
+
+msgid "FW verification"
+msgstr ""
+
+#, fuzzy
+msgid "enabled"
+msgstr "Включено"
+
+#, fuzzy
+msgid "disabled"
+msgstr "Выключено"
+
+msgid "FW measurement"
+msgstr ""
+
+#, fuzzy
+msgid "OS verification"
+msgstr "Подпись не прошла проверку"
+
+msgid "enforcing"
+msgstr ""
 
 msgid "BMC current side:"
 msgstr "Текущая сторона BMC:"
@@ -753,6 +824,7 @@ msgstr ""
 "Пример: root=/dev/sda1 console=hvc0\n"
 "\n"
 
+#, fuzzy
 msgid ""
 "Autoboot: Specify which devices to autoboot from.\n"
 "\n"
@@ -802,6 +874,11 @@ msgid ""
 "Disk R/W: Certain bootloader configurations may request write access to "
 "disks to save information or update parameters (eg. GRUB2). Use this option "
 "to control access to disks.\n"
+"\n"
+"Pre-boot check: Petitboot is able to check a payload for compatibility "
+"before booting it. If this check fails, petitboot will determine that the "
+"payload will not properly boot on this platform, and abort the boot. This "
+"configuration option allows skipping this check.\n"
 msgstr ""
 "Autoboot: Укажите, с каких устройств выполнять автоматическую загрузку.\n"
 "\n"
@@ -861,13 +938,6 @@ msgstr "Модули Petitboot"
 msgid "Finished: %s"
 msgstr "Завершено: %s"
 
-#, c-format
-msgid "Installing plugin %s"
-msgstr "Установка модуля %s"
-
-msgid "Failed to send install request"
-msgstr "Не удалось отправить запрос на установку"
-
 msgid "ID:"
 msgstr "ИД:"
 
@@ -921,8 +991,8 @@ msgstr "Протокол состояния Petitboot"
 msgid "Usage"
 msgstr "Использование"
 
-#~ msgid "kexec load failed"
-#~ msgstr "kexec load failed"
+#~ msgid "could not start pb-discover, the petitboot daemon.\n"
+#~ msgstr "не могу запустить pb-discover, демон petitboot.\n"
 
 #~ msgid "No network configured"
 #~ msgstr "No network configured"
