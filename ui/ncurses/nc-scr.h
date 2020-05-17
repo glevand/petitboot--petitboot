@@ -155,6 +155,7 @@ struct nc_scr {
 	enum pb_nc_sig sig;
 	void *container;
 	struct cui *cui;
+	struct nc_scr *return_scr;
 	struct pmenu *pmenu;
 	struct nc_frame frame;
 	WINDOW *main_ncw;
