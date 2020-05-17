@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: petitboot 20140623-g89bd2ed2-dirty\n"
 "Report-Msgid-Bugs-To: https://lists.ozlabs.org/listinfo/petitboot\n"
-"POT-Creation-Date: 2018-11-29 10:59+1100\n"
+"POT-Creation-Date: 2020-05-18 15:06-0700\n"
 "PO-Revision-Date: 2014-06-24 13:56+0800\n"
 "Last-Translator: Jeremy Kerr <jk@ozlabs.org>\n"
 "Language-Team: Simplified Chinese\n"
@@ -15,6 +15,30 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+
+#, fuzzy
+msgid "decryption failed"
+msgstr "解密失败"
+
+#, fuzzy
+msgid "signature verification failed"
+msgstr "签名验证失败"
+
+#, fuzzy
+msgid "invalid signature configuration"
+msgstr "无效的签名配置"
+
+#, fuzzy
+msgid "unknown verification failure"
+msgstr "签名验证失败"
+
+#, fuzzy, c-format
+msgid "Boot verification failure: %s"
+msgstr "签名验证失败"
+
+#, fuzzy, c-format
+msgid "kexec load failed: %s"
+msgstr "kexec load failed"
 
 msgid "Running boot hooks"
 msgstr "正在运行引导挂钩"
@@ -29,15 +53,6 @@ msgstr "无法从 %s 装入 %s"
 
 msgid "Performing kexec load"
 msgstr "正在执行 kexec 装入"
-
-msgid "Decryption failed"
-msgstr "解密失败"
-
-msgid "Signature verification failed"
-msgstr "签名验证失败"
-
-msgid "Invalid signature configuration"
-msgstr "无效的签名配置"
 
 msgid "Performing kexec reboot"
 msgstr "正在执行 kexec 重新引导"
@@ -113,6 +128,14 @@ msgstr ""
 
 #, c-format
 msgid "Applying temporary autoboot override: %s"
+msgstr ""
+
+#, c-format
+msgid "Failed to open encrypted device %s"
+msgstr ""
+
+#, c-format
+msgid "Encrypted device %s does not exist"
 msgstr ""
 
 #. TRANSLATORS: this string will be passed the type of the
@@ -211,6 +234,10 @@ msgstr "CD/DVD"
 
 msgid "Any"
 msgstr "任何"
+
+#, fuzzy
+msgid "Encrypted Device"
+msgstr "任何设备："
 
 msgid "Retrieve Config"
 msgstr "检索配置"
@@ -333,6 +360,13 @@ msgstr "清除选项："
 msgid "Clear IPMI override now"
 msgstr "立即清除 IPMI 覆盖"
 
+msgid "IPMI boot order mailbox config present"
+msgstr ""
+
+#, fuzzy
+msgid "Clear IPMI boot order mailbox now"
+msgstr "立即清除 IPMI 覆盖"
+
 msgid "Network:"
 msgstr "网络："
 
@@ -410,6 +444,13 @@ msgstr "手动设置：“%s”"
 msgid "Current interface: %s"
 msgstr "当前接口：%s"
 
+msgid "Update system password"
+msgstr ""
+
+#, fuzzy
+msgid "Pre-boot check:"
+msgstr "Petitboot 帮助"
+
 msgid "Petitboot System Configuration"
 msgstr "Petitboot 系统配置"
 
@@ -432,34 +473,6 @@ msgstr "正在引导 %s..."
 msgid "Failed: boot %s"
 msgstr "失败：引导 %s"
 
-#, c-format
-msgid "User item %u"
-msgstr "用户项 %u"
-
-#, c-format
-msgid "Plugins (%u)"
-msgstr "插件 (%u)"
-
-#, c-format
-msgid "  %s [installed]"
-msgstr ""
-
-msgid "Plugins (0)"
-msgstr "插件 (0)"
-
-#, c-format
-msgid "SAFE MODE: select '%s' to continue"
-msgstr "安全模式：选择“%s”以继续"
-
-msgid "Rescan devices"
-msgstr "重新扫描设备"
-
-msgid "Enter=accept, e=edit, n=new, x=exit, l=language, g=log, h=help"
-msgstr "Enter=接受，e=编辑，n=新建，x=退出，l=语言，h=帮助"
-
-msgid "Welcome to Petitboot"
-msgstr "欢迎使用 Petitboot"
-
 msgid "System information"
 msgstr "系统信息"
 
@@ -469,8 +482,14 @@ msgstr "系统配置"
 msgid "System status log"
 msgstr "系统状态日志"
 
+msgid "Rescan devices"
+msgstr "重新扫描设备"
+
 msgid "Retrieve config from URL"
 msgstr "从 URL 中检索配置"
+
+msgid "Plugins (0)"
+msgstr "插件 (0)"
 
 msgid "Reboot"
 msgstr "重新引导"
@@ -481,6 +500,18 @@ msgstr "退出到 shell"
 msgid "main menu"
 msgstr "主菜单"
 
+msgid "Enter=accept, e=edit, n=new, x=exit, l=language, g=log, h=help"
+msgstr "Enter=接受，e=编辑，n=新建，x=退出，l=语言，h=帮助"
+
+msgid "Welcome to Petitboot"
+msgstr "欢迎使用 Petitboot"
+
+msgid "Return to Main Menu"
+msgstr ""
+
+msgid "plugin menu"
+msgstr "插件菜单"
+
 msgid "Petitboot Plugins"
 msgstr "Petitboot 插件"
 
@@ -490,11 +521,28 @@ msgstr "Enter=安装，e=详细信息，x=退出，h=帮助"
 msgid "Available Petitboot Plugins"
 msgstr "可用的 Petitboot 插件"
 
-msgid "Return to Main Menu"
+#, c-format
+msgid "User item %u"
+msgstr "用户项 %u"
+
+msgid "Failed to send install request"
+msgstr "未能发送安装请求"
+
+#, c-format
+msgid "Installing plugin %s"
+msgstr "正在安装插件 %s"
+
+#, c-format
+msgid "Plugins (%u)"
+msgstr "插件 (%u)"
+
+#, c-format
+msgid "  %s [installed]"
 msgstr ""
 
-msgid "plugin menu"
-msgstr "插件菜单"
+#, c-format
+msgid "SAFE MODE: select '%s' to continue"
+msgstr "安全模式：选择“%s”以继续"
 
 #, c-format
 msgid "%s: alloc cui failed.\n"
@@ -503,10 +551,6 @@ msgstr "%s：alloc cui 失败。\n"
 #, c-format
 msgid "%s: error: discover_client_init failed.\n"
 msgstr "%s：错误：discover_client_init 失败。\n"
-
-#, c-format
-msgid "could not start pb-discover, the petitboot daemon.\n"
-msgstr "无法启动 pb-discover（它是 petitboot 守护程序）。\n"
 
 #, c-format
 msgid "check that pb-discover, the petitboot daemon is running.\n"
@@ -525,6 +569,9 @@ msgstr "语言"
 #, c-format
 msgid "Unknown language '%s'"
 msgstr "未知语言“%s”"
+
+msgid "Save changes?"
+msgstr ""
 
 msgid "Petitboot Language Selection"
 msgstr "选择 Petitboot 语言"
@@ -553,6 +600,30 @@ msgstr "主片段平台版本："
 
 msgid "Alternate platform versions:"
 msgstr "备用平台版本："
+
+msgid "Secure & trusted boot"
+msgstr ""
+
+msgid "FW verification"
+msgstr ""
+
+#, fuzzy
+msgid "enabled"
+msgstr "已启用"
+
+#, fuzzy
+msgid "disabled"
+msgstr "已禁用"
+
+msgid "FW measurement"
+msgstr ""
+
+#, fuzzy
+msgid "OS verification"
+msgstr "签名验证失败"
+
+msgid "enforcing"
+msgstr ""
 
 msgid "BMC current side:"
 msgstr "BMC 当前侧："
@@ -735,6 +806,7 @@ msgstr ""
 "示例：root=/dev/sda1 console=hvc0\n"
 "\n"
 
+#, fuzzy
 msgid ""
 "Autoboot: Specify which devices to autoboot from.\n"
 "\n"
@@ -784,6 +856,11 @@ msgid ""
 "Disk R/W: Certain bootloader configurations may request write access to "
 "disks to save information or update parameters (eg. GRUB2). Use this option "
 "to control access to disks.\n"
+"\n"
+"Pre-boot check: Petitboot is able to check a payload for compatibility "
+"before booting it. If this check fails, petitboot will determine that the "
+"payload will not properly boot on this platform, and abort the boot. This "
+"configuration option allows skipping this check.\n"
 msgstr ""
 "自动引导：指定要从其中自动引导的设备。\n"
 "\n"
@@ -828,13 +905,6 @@ msgstr "Petitboot 插件"
 #, c-format
 msgid "Finished: %s"
 msgstr "已完成：%s"
-
-#, c-format
-msgid "Installing plugin %s"
-msgstr "正在安装插件 %s"
-
-msgid "Failed to send install request"
-msgstr "未能发送安装请求"
 
 msgid "ID:"
 msgstr "标识："
@@ -887,8 +957,8 @@ msgstr "Petitboot 状态日志"
 msgid "Usage"
 msgstr "用法"
 
-#~ msgid "kexec load failed"
-#~ msgstr "kexec load failed"
+#~ msgid "could not start pb-discover, the petitboot daemon.\n"
+#~ msgstr "无法启动 pb-discover（它是 petitboot 守护程序）。\n"
 
 #~ msgid "No network configured"
 #~ msgstr "No network configured"

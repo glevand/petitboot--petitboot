@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: petitboot 20140623-g89bd2ed2-dirty\n"
 "Report-Msgid-Bugs-To: https://lists.ozlabs.org/listinfo/petitboot\n"
-"POT-Creation-Date: 2018-11-29 10:59+1100\n"
+"POT-Creation-Date: 2020-05-18 15:06-0700\n"
 "PO-Revision-Date: 2014-06-24 13:56+0800\n"
 "Last-Translator: Jeremy Kerr <jk@ozlabs.org>\n"
 "Language-Team: French\n"
@@ -15,6 +15,30 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
+
+#, fuzzy
+msgid "decryption failed"
+msgstr "Echec du déchiffrement"
+
+#, fuzzy
+msgid "signature verification failed"
+msgstr "Echec de la vérification de signature"
+
+#, fuzzy
+msgid "invalid signature configuration"
+msgstr "Configuration de signature non valide"
+
+#, fuzzy
+msgid "unknown verification failure"
+msgstr "Echec de la vérification de signature"
+
+#, fuzzy, c-format
+msgid "Boot verification failure: %s"
+msgstr "Echec de la vérification de signature"
+
+#, fuzzy, c-format
+msgid "kexec load failed: %s"
+msgstr "kexec load failed"
 
 msgid "Running boot hooks"
 msgstr "Exécution de points d'ancrage d'amorçage"
@@ -29,15 +53,6 @@ msgstr "Impossible de charger %s depuis %s"
 
 msgid "Performing kexec load"
 msgstr "Exécution du chargement kexec"
-
-msgid "Decryption failed"
-msgstr "Echec du déchiffrement"
-
-msgid "Signature verification failed"
-msgstr "Echec de la vérification de signature"
-
-msgid "Invalid signature configuration"
-msgstr "Configuration de signature non valide"
 
 msgid "Performing kexec reboot"
 msgstr "Exécution du réamorçage kexec"
@@ -116,6 +131,14 @@ msgstr ""
 
 #, c-format
 msgid "Applying temporary autoboot override: %s"
+msgstr ""
+
+#, c-format
+msgid "Failed to open encrypted device %s"
+msgstr ""
+
+#, c-format
+msgid "Encrypted device %s does not exist"
 msgstr ""
 
 #. TRANSLATORS: this string will be passed the type of the
@@ -214,6 +237,10 @@ msgstr "CD/DVD"
 
 msgid "Any"
 msgstr "Indifférent"
+
+#, fuzzy
+msgid "Encrypted Device"
+msgstr "Toute unité :"
 
 msgid "Retrieve Config"
 msgstr "Extraire la config"
@@ -336,6 +363,13 @@ msgstr "Option d'effacement :"
 msgid "Clear IPMI override now"
 msgstr "Effacer la substitution IPMI maintenant "
 
+msgid "IPMI boot order mailbox config present"
+msgstr ""
+
+#, fuzzy
+msgid "Clear IPMI boot order mailbox now"
+msgstr "Effacer la substitution IPMI maintenant "
+
 msgid "Network:"
 msgstr "Réseau :"
 
@@ -415,6 +449,13 @@ msgstr "Défini manuellement : '%s'"
 msgid "Current interface: %s"
 msgstr "Interface en cours : %s"
 
+msgid "Update system password"
+msgstr ""
+
+#, fuzzy
+msgid "Pre-boot check:"
+msgstr "Aide de Petitboot"
+
 msgid "Petitboot System Configuration"
 msgstr "Configuration de système Petitboot"
 
@@ -437,35 +478,6 @@ msgstr "Amorçage de %s..."
 msgid "Failed: boot %s"
 msgstr "Echec : amorçage de %s"
 
-#, c-format
-msgid "User item %u"
-msgstr "Elément utilisateur %u"
-
-#, c-format
-msgid "Plugins (%u)"
-msgstr "Plug-in (%u)"
-
-#, c-format
-msgid "  %s [installed]"
-msgstr ""
-
-msgid "Plugins (0)"
-msgstr "Plug-in (0)"
-
-#, c-format
-msgid "SAFE MODE: select '%s' to continue"
-msgstr "MODE SANS ECHEC : sélectionnez '%s' pour continuer"
-
-msgid "Rescan devices"
-msgstr "Réanalyser les unités"
-
-msgid "Enter=accept, e=edit, n=new, x=exit, l=language, g=log, h=help"
-msgstr ""
-"Entrée=accepter, e=éditer, n=nouveau, x=quitter, l=langage, g=journal, h=aide"
-
-msgid "Welcome to Petitboot"
-msgstr "Bienvenue dans Petitboot"
-
 msgid "System information"
 msgstr "Informations système"
 
@@ -475,8 +487,14 @@ msgstr "Configuration système"
 msgid "System status log"
 msgstr "Journal d'état du système"
 
+msgid "Rescan devices"
+msgstr "Réanalyser les unités"
+
 msgid "Retrieve config from URL"
 msgstr "Récupérer la config depuis une URL"
+
+msgid "Plugins (0)"
+msgstr "Plug-in (0)"
 
 msgid "Reboot"
 msgstr "Réamorcer"
@@ -487,6 +505,19 @@ msgstr "Revenir à l'interpréteur de commandes"
 msgid "main menu"
 msgstr "menu principal"
 
+msgid "Enter=accept, e=edit, n=new, x=exit, l=language, g=log, h=help"
+msgstr ""
+"Entrée=accepter, e=éditer, n=nouveau, x=quitter, l=langage, g=journal, h=aide"
+
+msgid "Welcome to Petitboot"
+msgstr "Bienvenue dans Petitboot"
+
+msgid "Return to Main Menu"
+msgstr ""
+
+msgid "plugin menu"
+msgstr "Menu des plug-in"
+
 msgid "Petitboot Plugins"
 msgstr "Plug-in Petitboot"
 
@@ -496,11 +527,28 @@ msgstr "Entrée=installer, e=détails, x=quitter, h=aide"
 msgid "Available Petitboot Plugins"
 msgstr "Plug-in Petitboot disponibles"
 
-msgid "Return to Main Menu"
+#, c-format
+msgid "User item %u"
+msgstr "Elément utilisateur %u"
+
+msgid "Failed to send install request"
+msgstr "Echec de l'envoi de la demande d'installation "
+
+#, c-format
+msgid "Installing plugin %s"
+msgstr "Installation du plug-in %s"
+
+#, c-format
+msgid "Plugins (%u)"
+msgstr "Plug-in (%u)"
+
+#, c-format
+msgid "  %s [installed]"
 msgstr ""
 
-msgid "plugin menu"
-msgstr "Menu des plug-in"
+#, c-format
+msgid "SAFE MODE: select '%s' to continue"
+msgstr "MODE SANS ECHEC : sélectionnez '%s' pour continuer"
 
 #, c-format
 msgid "%s: alloc cui failed.\n"
@@ -509,10 +557,6 @@ msgstr "%s : Echec d'alloc de cui.\n"
 #, c-format
 msgid "%s: error: discover_client_init failed.\n"
 msgstr "%s : erreur : échec de discover_client_init.\n"
-
-#, c-format
-msgid "could not start pb-discover, the petitboot daemon.\n"
-msgstr "impossible de démarrer pb-discover, le démon Petitboot.\n"
 
 #, c-format
 msgid "check that pb-discover, the petitboot daemon is running.\n"
@@ -532,6 +576,9 @@ msgstr "Langue"
 #, c-format
 msgid "Unknown language '%s'"
 msgstr "Langue inconnue '%s'"
+
+msgid "Save changes?"
+msgstr ""
 
 msgid "Petitboot Language Selection"
 msgstr "Sélection de langue pour Petitboot"
@@ -560,6 +607,30 @@ msgstr "Versions de plateforme principales :"
 
 msgid "Alternate platform versions:"
 msgstr "Versions de plateforme secondaires :"
+
+msgid "Secure & trusted boot"
+msgstr ""
+
+msgid "FW verification"
+msgstr ""
+
+#, fuzzy
+msgid "enabled"
+msgstr "Activé"
+
+#, fuzzy
+msgid "disabled"
+msgstr "Désactivé"
+
+msgid "FW measurement"
+msgstr ""
+
+#, fuzzy
+msgid "OS verification"
+msgstr "Echec de la vérification de signature"
+
+msgid "enforcing"
+msgstr ""
 
 msgid "BMC current side:"
 msgstr "Niveau en cours du BMC :"
@@ -756,6 +827,7 @@ msgstr ""
 "Exemple : root=/dev/sda1 console=hvc0\n"
 "\n"
 
+#, fuzzy
 msgid ""
 "Autoboot: Specify which devices to autoboot from.\n"
 "\n"
@@ -805,6 +877,11 @@ msgid ""
 "Disk R/W: Certain bootloader configurations may request write access to "
 "disks to save information or update parameters (eg. GRUB2). Use this option "
 "to control access to disks.\n"
+"\n"
+"Pre-boot check: Petitboot is able to check a payload for compatibility "
+"before booting it. If this check fails, petitboot will determine that the "
+"payload will not properly boot on this platform, and abort the boot. This "
+"configuration option allows skipping this check.\n"
 msgstr ""
 "Amorçage automatique : spécifiez les unités à partir desquelles effectuer "
 "l'amorçage automatique.\n"
@@ -868,13 +945,6 @@ msgstr "Plug-in Petitboot"
 msgid "Finished: %s"
 msgstr "Terminé : %s"
 
-#, c-format
-msgid "Installing plugin %s"
-msgstr "Installation du plug-in %s"
-
-msgid "Failed to send install request"
-msgstr "Echec de l'envoi de la demande d'installation "
-
 msgid "ID:"
 msgstr "ID :"
 
@@ -929,8 +999,8 @@ msgstr "Journal d'état de Petitboot "
 msgid "Usage"
 msgstr "Utilisation"
 
-#~ msgid "kexec load failed"
-#~ msgstr "kexec load failed"
+#~ msgid "could not start pb-discover, the petitboot daemon.\n"
+#~ msgstr "impossible de démarrer pb-discover, le démon Petitboot.\n"
 
 #~ msgid "No network configured"
 #~ msgstr "No network configured"

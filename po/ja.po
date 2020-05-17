@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: petitboot 20140623-g89bd2ed2-dirty\n"
 "Report-Msgid-Bugs-To: https://lists.ozlabs.org/listinfo/petitboot\n"
-"POT-Creation-Date: 2018-11-29 10:59+1100\n"
+"POT-Creation-Date: 2020-05-18 15:06-0700\n"
 "PO-Revision-Date: 2014-06-24 13:56+0800\n"
 "Last-Translator: Jeremy Kerr <jk@ozlabs.org>\n"
 "Language-Team: Japanese\n"
@@ -15,6 +15,30 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+
+#, fuzzy
+msgid "decryption failed"
+msgstr "暗号化解除に失敗しました"
+
+#, fuzzy
+msgid "signature verification failed"
+msgstr "シグニチャー検査が失敗しました"
+
+#, fuzzy
+msgid "invalid signature configuration"
+msgstr "シグニチャー構成が無効です"
+
+#, fuzzy
+msgid "unknown verification failure"
+msgstr "シグニチャー検査が失敗しました"
+
+#, fuzzy, c-format
+msgid "Boot verification failure: %s"
+msgstr "シグニチャー検査が失敗しました"
+
+#, fuzzy, c-format
+msgid "kexec load failed: %s"
+msgstr "kexec load failed"
 
 msgid "Running boot hooks"
 msgstr "ブート・フックを実行しています"
@@ -29,15 +53,6 @@ msgstr "%s を %s からロードできませんでした"
 
 msgid "Performing kexec load"
 msgstr "kexec ロードを実行しています"
-
-msgid "Decryption failed"
-msgstr "暗号化解除に失敗しました"
-
-msgid "Signature verification failed"
-msgstr "シグニチャー検査が失敗しました"
-
-msgid "Invalid signature configuration"
-msgstr "シグニチャー構成が無効です"
 
 msgid "Performing kexec reboot"
 msgstr "kexec リブートを実行しています"
@@ -115,6 +130,14 @@ msgstr ""
 
 #, c-format
 msgid "Applying temporary autoboot override: %s"
+msgstr ""
+
+#, c-format
+msgid "Failed to open encrypted device %s"
+msgstr ""
+
+#, c-format
+msgid "Encrypted device %s does not exist"
 msgstr ""
 
 #. TRANSLATORS: this string will be passed the type of the
@@ -213,6 +236,10 @@ msgstr "CD/DVD"
 
 msgid "Any"
 msgstr "任意"
+
+#, fuzzy
+msgid "Encrypted Device"
+msgstr "任意のデバイス:"
 
 msgid "Retrieve Config"
 msgstr "構成を取得してください"
@@ -335,6 +362,13 @@ msgstr "消去オプション:"
 msgid "Clear IPMI override now"
 msgstr "IPMI オーバーライドを直ちに消去してください"
 
+msgid "IPMI boot order mailbox config present"
+msgstr ""
+
+#, fuzzy
+msgid "Clear IPMI boot order mailbox now"
+msgstr "IPMI オーバーライドを直ちに消去してください"
+
 msgid "Network:"
 msgstr "ネットワーク:"
 
@@ -414,6 +448,13 @@ msgstr "手動で設定: %s"
 msgid "Current interface: %s"
 msgstr "現在のインターフェース: %s"
 
+msgid "Update system password"
+msgstr ""
+
+#, fuzzy
+msgid "Pre-boot check:"
+msgstr "Petitboot のヘルプ"
+
 msgid "Petitboot System Configuration"
 msgstr "Petitboot システム構成"
 
@@ -436,34 +477,6 @@ msgstr "%s をブートしています..."
 msgid "Failed: boot %s"
 msgstr "失敗: %s のブート"
 
-#, c-format
-msgid "User item %u"
-msgstr "ユーザー項目 %u"
-
-#, c-format
-msgid "Plugins (%u)"
-msgstr "プラグイン (%u)"
-
-#, c-format
-msgid "  %s [installed]"
-msgstr ""
-
-msgid "Plugins (0)"
-msgstr "プラグイン (0)"
-
-#, c-format
-msgid "SAFE MODE: select '%s' to continue"
-msgstr "セーフ・モード: 続行するには「%s」を選択してください"
-
-msgid "Rescan devices"
-msgstr "デバイスの再スキャン"
-
-msgid "Enter=accept, e=edit, n=new, x=exit, l=language, g=log, h=help"
-msgstr "Enter=受け入れ、e=編集、n=新規、x=終了、l=言語、g=ログ、h=ヘルプ"
-
-msgid "Welcome to Petitboot"
-msgstr "Petitboot へようこそ"
-
 msgid "System information"
 msgstr "システム情報"
 
@@ -473,8 +486,14 @@ msgstr "システム構成"
 msgid "System status log"
 msgstr "システム状況ログ"
 
+msgid "Rescan devices"
+msgstr "デバイスの再スキャン"
+
 msgid "Retrieve config from URL"
 msgstr "URL から構成を取得"
+
+msgid "Plugins (0)"
+msgstr "プラグイン (0)"
 
 msgid "Reboot"
 msgstr "リブート"
@@ -485,6 +504,18 @@ msgstr "終了してシェルに戻る"
 msgid "main menu"
 msgstr "メインメニュー"
 
+msgid "Enter=accept, e=edit, n=new, x=exit, l=language, g=log, h=help"
+msgstr "Enter=受け入れ、e=編集、n=新規、x=終了、l=言語、g=ログ、h=ヘルプ"
+
+msgid "Welcome to Petitboot"
+msgstr "Petitboot へようこそ"
+
+msgid "Return to Main Menu"
+msgstr ""
+
+msgid "plugin menu"
+msgstr "プラグイン・メニュー"
+
 msgid "Petitboot Plugins"
 msgstr "Petitboot プラグイン"
 
@@ -494,11 +525,28 @@ msgstr "Enter=インストール、e=詳細、x=終了、h=ヘルプ"
 msgid "Available Petitboot Plugins"
 msgstr "使用可能な Petitboot プラグイン"
 
-msgid "Return to Main Menu"
+#, c-format
+msgid "User item %u"
+msgstr "ユーザー項目 %u"
+
+msgid "Failed to send install request"
+msgstr "インストール要求を送信できませんでした"
+
+#, c-format
+msgid "Installing plugin %s"
+msgstr "プラグイン %s をインストールしています"
+
+#, c-format
+msgid "Plugins (%u)"
+msgstr "プラグイン (%u)"
+
+#, c-format
+msgid "  %s [installed]"
 msgstr ""
 
-msgid "plugin menu"
-msgstr "プラグイン・メニュー"
+#, c-format
+msgid "SAFE MODE: select '%s' to continue"
+msgstr "セーフ・モード: 続行するには「%s」を選択してください"
 
 #, c-format
 msgid "%s: alloc cui failed.\n"
@@ -507,10 +555,6 @@ msgstr "%s: cui を割り振ることができませんでした。\n"
 #, c-format
 msgid "%s: error: discover_client_init failed.\n"
 msgstr "%s: エラー: discover_client_init が失敗しました。\n"
-
-#, c-format
-msgid "could not start pb-discover, the petitboot daemon.\n"
-msgstr "pb-discover (petitboot デーモン) を開始できませんでした。\n"
 
 #, c-format
 msgid "check that pb-discover, the petitboot daemon is running.\n"
@@ -530,6 +574,9 @@ msgstr "言語"
 #, c-format
 msgid "Unknown language '%s'"
 msgstr "「%s」は不明な言語です"
+
+msgid "Save changes?"
+msgstr ""
 
 msgid "Petitboot Language Selection"
 msgstr "Petitboot 言語選択"
@@ -558,6 +605,30 @@ msgstr "1 次プラットフォーム・バージョン:"
 
 msgid "Alternate platform versions:"
 msgstr "代替プラットフォーム・バージョン:"
+
+msgid "Secure & trusted boot"
+msgstr ""
+
+msgid "FW verification"
+msgstr ""
+
+#, fuzzy
+msgid "enabled"
+msgstr "使用可能"
+
+#, fuzzy
+msgid "disabled"
+msgstr "使用不可"
+
+msgid "FW measurement"
+msgstr ""
+
+#, fuzzy
+msgid "OS verification"
+msgstr "シグニチャー検査が失敗しました"
+
+msgid "enforcing"
+msgstr ""
 
 msgid "BMC current side:"
 msgstr "BMC の現在のサイド:"
@@ -757,6 +828,7 @@ msgstr ""
 "例えば、root=/dev/sda1 console=hvc0 のように入力します。\n"
 "\n"
 
+#, fuzzy
 msgid ""
 "Autoboot: Specify which devices to autoboot from.\n"
 "\n"
@@ -806,6 +878,11 @@ msgid ""
 "Disk R/W: Certain bootloader configurations may request write access to "
 "disks to save information or update parameters (eg. GRUB2). Use this option "
 "to control access to disks.\n"
+"\n"
+"Pre-boot check: Petitboot is able to check a payload for compatibility "
+"before booting it. If this check fails, petitboot will determine that the "
+"payload will not properly boot on this platform, and abort the boot. This "
+"configuration option allows skipping this check.\n"
 msgstr ""
 "自動ブート: 自動ブートを開始するデバイスを指定します。\n"
 "\n"
@@ -864,13 +941,6 @@ msgstr "Petitboot プラグイン"
 msgid "Finished: %s"
 msgstr "完了しました: %s"
 
-#, c-format
-msgid "Installing plugin %s"
-msgstr "プラグイン %s をインストールしています"
-
-msgid "Failed to send install request"
-msgstr "インストール要求を送信できませんでした"
-
 msgid "ID:"
 msgstr "ID:"
 
@@ -925,8 +995,8 @@ msgstr "Petitboot 状況ログ"
 msgid "Usage"
 msgstr "使用法"
 
-#~ msgid "kexec load failed"
-#~ msgstr "kexec load failed"
+#~ msgid "could not start pb-discover, the petitboot daemon.\n"
+#~ msgstr "pb-discover (petitboot デーモン) を開始できませんでした。\n"
 
 #~ msgid "No network configured"
 #~ msgstr "No network configured"

@@ -28,4 +28,4 @@ ui/ncurses/nc-plugin.c
 ui/ncurses/nc-plugin-help.c
 ui/ncurses/nc-plugin-menu-help.c
 ui/ncurses/nc-statuslog.c
-ui/ncurses/generic-main.c
+ui/ncurses/main.c

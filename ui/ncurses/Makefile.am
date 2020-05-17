@@ -67,7 +67,7 @@ ui_ncurses_petitboot_nc_CPPFLAGS = \
 	$(DEFAULT_CPPFLAGS) \
 	-DLOCALEDIR='"$(localedir)"' \
 	-I$(top_srcdir)/lib
-ui_ncurses_petitboot_nc_SOURCES = ui/ncurses/generic-main.c
+ui_ncurses_petitboot_nc_SOURCES = ui/ncurses/main.c
 ui_ncurses_petitboot_nc_LDADD = $(ui_ncurses_common_libs)
 
 EXTRA_DIST += ui/ncurses/ui-guidelines.text
