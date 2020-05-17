@@ -81,9 +81,7 @@ struct cui {
 	bool preboot_mode;
 };
 
-struct cui *cui_init(void* platform_info,
-		int (*js_map)(const struct js_event *e),
-		int start_daemon, int timeout);
+struct cui *cui_init(int timeout);
 struct nc_scr *cui_set_current(struct cui *cui, struct nc_scr *scr);
 int cui_run(struct cui *cui);
 void cui_item_edit(struct pmenu_item *item);

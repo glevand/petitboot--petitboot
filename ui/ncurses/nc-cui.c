@@ -1856,8 +1856,7 @@ static int cui_server_wait(void *arg)
  * sets up the ncurses menu screen.
  */
 
-struct cui *cui_init(void* platform_info,
-	int (*js_map)(const struct js_event *e), int start_daemon, int timeout)
+struct cui *cui_init(int timeout)
 {
 	struct cui *cui;
 	unsigned int i;
@@ -1870,7 +1869,6 @@ struct cui *cui_init(void* platform_info,
 	}
 
 	cui->c_sig = pb_cui_sig;
-	cui->platform_info = platform_info;
 	cui->waitset = waitset_create(cui);
 	cui->statuslog = statuslog_init(cui);
 
@@ -1878,32 +1876,13 @@ struct cui *cui_init(void* platform_info,
 
 	/* Loop here for scripts that just started the server. */
 
-retry_start:
-	for (i = start_daemon ? 2 : 15; i && timeout; i--) {
+	for (i = 15; i && timeout; i--) {
 		cui->client = discover_client_init(cui->waitset,
 				&cui_client_ops, cui);
 		if (cui->client || !i)
 			break;
 		pb_log_fn("waiting for server %d\n", i);
 		sleep(1);
-	}
-
-	if (!cui->client && start_daemon) {
-		int result;
-
-		start_daemon = 0;
-
-		result = pb_start_daemon(cui);
-
-		if (!result)
-			goto retry_start;
-
-		pb_log_fn("discover_client_init failed.\n");
-		fprintf(stderr, _("%s: error: discover_client_init failed.\n"),
-			__func__);
-		fprintf(stderr, _("could not start pb-discover, the petitboot "
-			"daemon.\n"));
-		goto fail_client_init;
 	}
 
 	if (!cui->client && !timeout) {
@@ -1934,15 +1913,6 @@ retry_start:
 
 	waiter_register_io(cui->waitset, STDIN_FILENO, WAIT_IN,
 			cui_process_key, cui);
-
-	if (js_map) {
-
-		cui->pjs = pjs_init(cui, js_map);
-
-		if (cui->pjs)
-			waiter_register_io(cui->waitset, pjs_get_fd(cui->pjs),
-					WAIT_IN, cui_process_js, cui);
-	}
 
 	return cui;
 
