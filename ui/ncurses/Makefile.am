@@ -63,20 +63,11 @@ ui_ncurses_libpbnc_la_SOURCES = \
 
 sbin_PROGRAMS += ui/ncurses/petitboot-nc
 
-if PLATFORM_PS3
-sbin_PROGRAMS += ui/ncurses/petitboot-ps3-nc
-endif
-
 ui_ncurses_petitboot_nc_CPPFLAGS = \
 	$(DEFAULT_CPPFLAGS) \
 	-DLOCALEDIR='"$(localedir)"' \
 	-I$(top_srcdir)/lib
-
 ui_ncurses_petitboot_nc_SOURCES = ui/ncurses/generic-main.c
 ui_ncurses_petitboot_nc_LDADD = $(ui_ncurses_common_libs)
-
-ui_ncurses_petitboot_ps3_nc_SOURCES = ui/ncurses/ps3-main.c
-ui_ncurses_petitboot_ps3_nc_LDADD = $(ui_ncurses_common_libs) \
-				    $(libdir)/libps3-utils.so
 
 EXTRA_DIST += ui/ncurses/ui-guidelines.text
