@@ -33,12 +33,13 @@
 #include <libintl.h>
 #include <locale.h>
 
+#include "platform.h"
+
 #include "log/log.h"
 #include "talloc/talloc.h"
 #include "waiter/waiter.h"
 #include "i18n/i18n.h"
 #include "ui/common/discover-client.h"
-#include "nc-cui.h"
 
 static void print_version(void)
 {
@@ -187,7 +188,6 @@ int main(int argc, char *argv[])
 	static struct sigaction sa;
 	const char *log_filename;
 	int result;
-	int cui_result;
 	struct opts opts;
 	FILE *log;
 
@@ -245,14 +245,21 @@ int main(int argc, char *argv[])
 	}
 
 	cui = cui_init(opts.timeout);
-	if (!cui)
+
+	if (!cui) {
 		return EXIT_FAILURE;
+	}
 
-	cui_result = cui_run(cui);
+	result = platform_init(cui);
 
+	if (result) {
+		goto exit;
+	}
+
+	result = cui_run(cui);
+
+exit:
 	talloc_free(cui);
-
 	pb_log("--- end ---\n");
-
-	return cui_result ? EXIT_FAILURE : EXIT_SUCCESS;
+	return result ? EXIT_FAILURE : EXIT_SUCCESS;
 }

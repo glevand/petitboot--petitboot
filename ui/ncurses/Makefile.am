@@ -18,6 +18,11 @@ ui_ncurses_common_libs = \
 	$(core_lib) \
 	@MENU_LIB@ @FORM_LIB@ @CURSES_LIB@
 
+ui_ncurses_common_cppflags = \
+	$(DEFAULT_CPPFLAGS) \
+	-DLOCALEDIR='"$(localedir)"' \
+	-I$(top_srcdir)/lib
+
 noinst_LTLIBRARIES += ui/ncurses/libpbnc.la
 
 ui_ncurses_libpbnc_la_SOURCES = \
@@ -61,13 +66,31 @@ ui_ncurses_libpbnc_la_SOURCES = \
 	ui/ncurses/nc-auth.c \
 	ui/ncurses/nc-auth.h
 
-sbin_PROGRAMS += ui/ncurses/petitboot-nc
+if PLATFORM_ARM64
+sbin_PROGRAMS += ui/ncurses/petitboot-arm64
+ui_ncurses_petitboot_arm64_CPPFLAGS = $(ui_ncurses_common_cppflags)
+ui_ncurses_petitboot_arm64_SOURCES = \
+	ui/ncurses/main.c \
+	ui/ncurses/platform-arm64.c
+ui_ncurses_petitboot_arm64_LDADD = $(ui_ncurses_common_libs)
+endif
 
-ui_ncurses_petitboot_nc_CPPFLAGS = \
-	$(DEFAULT_CPPFLAGS) \
-	-DLOCALEDIR='"$(localedir)"' \
-	-I$(top_srcdir)/lib
-ui_ncurses_petitboot_nc_SOURCES = ui/ncurses/main.c
-ui_ncurses_petitboot_nc_LDADD = $(ui_ncurses_common_libs)
+if PLATFORM_POWERPC
+sbin_PROGRAMS += ui/ncurses/petitboot-powerpc
+ui_ncurses_petitboot_powerpc_CPPFLAGS = $(ui_ncurses_common_cppflags)
+ui_ncurses_petitboot_powerpc_SOURCES = \
+	ui/ncurses/main.c \
+	ui/ncurses/platform-powerpc.c
+ui_ncurses_petitboot_powerpc_LDADD = $(ui_ncurses_common_libs)
+endif
+
+if PLATFORM_PS3
+sbin_PROGRAMS += ui/ncurses/petitboot-ps3
+ui_ncurses_petitboot_ps3_CPPFLAGS = $(ui_ncurses_common_cppflags) 
+ui_ncurses_petitboot_ps3_SOURCES = \
+	ui/ncurses/main.c \
+	ui/ncurses/platform-ps3.c
+ui_ncurses_petitboot_ps3_LDADD = $(ui_ncurses_common_libs)
+endif
 
 EXTRA_DIST += ui/ncurses/ui-guidelines.text
