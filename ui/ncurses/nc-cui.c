@@ -831,9 +831,8 @@ static bool process_global_keys(struct cui *cui, int key)
  * cui_process_key - Process input on stdin.
  */
 
-static int cui_process_key(void *arg)
+int cui_process_key(struct cui *cui)
 {
-	struct cui *cui = cui_from_arg(arg);
 	unsigned int i;
 	char *sequence;
 	int grab;
@@ -893,25 +892,6 @@ static int cui_process_key(void *arg)
 			continue;
 
 		cui->current->process_key(cui->current, c);
-	}
-
-	return 0;
-}
-
-/**
- * cui_process_js - Process joystick events.
- */
-
-static int cui_process_js(void *arg)
-{
-	struct cui *cui = cui_from_arg(arg);
-	int c;
-
-	c = pjs_process_event(cui->pjs);
-
-	if (c) {
-		ungetch(c);
-		cui_process_key(arg);
 	}
 
 	return 0;
@@ -1912,7 +1892,7 @@ struct cui *cui_init(int timeout)
 		goto fail_client_init;
 
 	waiter_register_io(cui->waitset, STDIN_FILENO, WAIT_IN,
-			cui_process_key, cui);
+			(waiter_cb)cui_process_key, cui);
 
 	return cui;
 
