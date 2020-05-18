@@ -112,7 +112,7 @@ int ps3_flash_get_values(struct ps3_flash_values *values)
 	struct ps3_flash_ctx fc;
 	uint64_t tmp;
 
-	result = ps3_flash_open(&fc, "r");
+	sum = result = ps3_flash_open(&fc, "r");
 
 	if (result)
 		goto fail;
@@ -127,12 +127,12 @@ int ps3_flash_get_values(struct ps3_flash_values *values)
 		goto fail;
 	}
 
-	sum = result = os_area_db_get(&fc.db, &id_default_item, &tmp);
+	sum += result = os_area_db_get(&fc.db, &id_flags, &tmp);
 
 	if (!result)
-		values->default_item = (uint32_t)tmp;
+		values->flags = (uint32_t)tmp;
 
-	result = os_area_db_get(&fc.db, &id_timeout, &tmp);
+	sum += result = os_area_db_get(&fc.db, &id_timeout, &tmp);
 
 	if (!result)
 		values->timeout = (uint8_t)tmp;
@@ -142,12 +142,10 @@ int ps3_flash_get_values(struct ps3_flash_values *values)
 	if (!result)
 		values->video_mode = (uint16_t)tmp;
 
-	pb_debug("%s: default_item: %x\n", __func__,
-		(unsigned int)values->default_item);
-	pb_debug("%s: timeout: %u\n", __func__,
-		(unsigned int)values->timeout);
-	pb_debug("%s: video_mode:   %u\n", __func__,
-		(unsigned int)values->video_mode);
+	pb_debug_fl("flags:        %x\n", (unsigned int)values->flags);
+	pb_debug_fl("default_item: %x\n", (unsigned int)values->default_item);
+	pb_debug_fl("timeout:      %u\n", (unsigned int)values->timeout);
+	pb_debug_fl("video_mode:   %u\n", (unsigned int)values->video_mode);
 fail:
 	values->dirty = (result || sum);
 	return values->dirty ? -1 : 0;
