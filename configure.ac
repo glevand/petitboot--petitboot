@@ -264,8 +264,11 @@ AC_ARG_ENABLE(
 	[platform-all],
 	[AS_HELP_STRING(
 		[--enable-platform-all],
-		[build support for all platforms [default=no]]
-	)]
+		[build support for all platforms [default=yes]]
+	)],
+	[],
+	[enable_platform_all="yes"]
+
 )
 AS_IF(
 	[test "x$enable_platform_all" = "xyes"],
@@ -276,10 +279,10 @@ AC_ARG_ENABLE(
 	[platform-auto],
 	[AS_HELP_STRING(
 		[--enable-platform-auto],
-		[auto detect platform support to build [default=yes]]
+		[auto detect platform support to build [default=no]]
 	)],
 	[],
-	[enable_platform_auto="yes"]
+	[]
 )
 AS_IF(
 	[test "x$enable_platform_auto" = "xyes"],
