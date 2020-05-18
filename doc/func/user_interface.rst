@@ -1,7 +1,7 @@
 User Interface
 ==============
 
-There are two UI implementations but in practice the ncurses client `petitboot-nc` is the primary interface.
+The primary user interface is a ncurses based menu which displays boot options and system information.
 
 The default view includes a list of discovered boot options and links to other sub screens.
 Common shortcuts include:

@@ -17,6 +17,5 @@ dist_man_MANS = \
 	man/pb-discover.8 \
 	man/pb-event.8 \
 	man/petitboot-nc.8 \
-	man/petitboot-twin.8 \
 	man/pb-udhcpc.8 \
 	man/petitboot.8

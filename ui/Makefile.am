@@ -16,14 +16,6 @@ if WITH_NCURSES
   EXTRA_1 = ncurses
 endif
 
-if WITH_TWIN_X11
-  EXTRA_2 = twin
-endif
-
-if WITH_TWIN_FBDEV
-  EXTRA_2 = twin
-endif
-
-SUBDIRS = common test $(EXTRA_1) $(EXTRA_2)
+SUBDIRS = common test $(EXTRA_1)
 
 MAINTAINERCLEANFILES = Makefile.in
