@@ -60,6 +60,18 @@ int platform_init(struct cui *cui)
 	ui->cui = cui;
 	cui->platform_info = ui;
 
+	ui->cui->main_scr = main_scr_init(ui->cui);
+	
+	if (!ui->cui->main_scr) {
+		return -1;
+	}
+
+	cui->plugin_scr = plugin_scr_init(cui);
+
+	if (!cui->plugin_scr) {
+		return -1;
+	}
+
 	pb_debug_fl("<-\n");
 	return 0;
 }

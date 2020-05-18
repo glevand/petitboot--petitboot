@@ -478,7 +478,7 @@ fail_setup:
 	return NULL;
 }
 
-static struct nc_scr *main_scr_init(struct cui *cui)
+struct nc_scr *main_scr_init(struct cui *cui)
 {
 	struct nc_scr *main_scr;
 
@@ -545,7 +545,7 @@ fail_setup:
 	return NULL;
 }
 
-static struct nc_scr *plugin_scr_init(struct cui *cui)
+struct nc_scr *plugin_scr_init(struct cui *cui)
 {
 	struct nc_scr *plugin_scr;
 
@@ -1854,7 +1854,7 @@ struct cui *cui_init(int timeout)
 	if (!cui) {
 		pb_log_fn("alloc cui failed.\n");
 		fprintf(stderr, _("%s: alloc cui failed.\n"), __func__);
-		goto fail_alloc;
+		return NULL;
 	}
 
 	cui->sig = pb_cui_sig;
@@ -1890,15 +1890,8 @@ struct cui *cui_init(int timeout)
 
 	atexit(cui_atexit);
 	talloc_steal(cui, cui->client);
+
 	cui_start();
-
-	cui->main_scr = main_scr_init(cui);
-	if (!cui->main_scr)
-		goto fail_client_init;
-
-	cui->plugin_scr = plugin_scr_init(cui);
-	if (!cui->plugin_scr)
-		goto fail_client_init;
 
 	waiter_register_io(cui->waitset, STDIN_FILENO, WAIT_IN,
 			(waiter_cb)cui_process_key, cui);
@@ -1907,7 +1900,6 @@ struct cui *cui_init(int timeout)
 
 fail_client_init:
 	talloc_free(cui);
-fail_alloc:
 	return NULL;
 }
 
