@@ -57,7 +57,7 @@ static struct ps3_ui *ps3_from_cui(struct cui *cui)
 	struct ps3_ui *ps3;
 
 	assert(cui->sig == pb_cui_sig);
-	ps3 = cui->platform_info;
+	ps3 = cui->platform.data;
 	assert(ps3->sig == ps3_ui_sig);
 	return ps3;
 }
@@ -72,7 +72,7 @@ static struct ps3_ui *ps3_from_item(struct pmenu_item *item)
 	cui = cui_from_item(item);
 	assert(cui->sig == pb_cui_sig);
 
-	ps3 = cui->platform_info;
+	ps3 = cui->platform.data;
 	assert(ps3->cui->sig == pb_cui_sig);
 
 	return ps3;
@@ -374,6 +374,30 @@ static void ps3_setup_svm(struct ps3_ui *ps3)
 	//cui_add_platform_menu(cui, main_menu, main_menu_item);
 }
 
+static int ps3_screen_update(struct cui *cui)
+{
+	bool repost_menu;
+
+	/* we'll need to update the menu: drop all items and repopulate */
+	repost_menu = cui->current_scr == cui->main_scr ||
+		cui->current_scr == cui->plugin_scr;
+	if (repost_menu)
+		nc_scr_unpost(cui->current_scr);
+
+	talloc_free(cui->main_scr->pmenu);
+	cui->main_scr = main_scr_init(cui);
+
+	talloc_free(cui->plugin_scr->pmenu);
+	cui->plugin_scr = plugin_scr_init(cui);
+
+	if (repost_menu) {
+		cui->current_scr = cui->main_scr;
+		nc_scr_post(cui->current_scr);
+	}
+
+	return 0;
+}
+
 int platform_init(struct cui *cui)
 {
 	struct ps3_ui *ps3;
@@ -384,7 +408,9 @@ int platform_init(struct cui *cui)
 
 	ps3->sig = ps3_ui_sig;
 	ps3->cui = cui;
-	cui->platform_info = ps3;
+
+	cui->platform.data = ps3;
+	cui->platform.screen_update = ps3_screen_update;
 
 	ps3->cui->main_scr = main_scr_init(ps3->cui);
 

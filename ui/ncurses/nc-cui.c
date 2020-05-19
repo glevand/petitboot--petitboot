@@ -391,7 +391,7 @@ static int menu_plugin_execute(struct pmenu_item *item)
 	return 0;
 }
 
-static struct pmenu *main_menu_init(struct nc_scr *main_scr)
+struct pmenu *main_menu_init(struct nc_scr *main_scr)
 {
 	struct pmenu_item *i;
 	struct pmenu *m;
@@ -494,8 +494,6 @@ struct nc_scr *main_scr_init(struct cui *cui)
 		_("Enter=accept, e=edit, n=new, x=exit, l=language, g=log, h=help"));
 	main_scr->frame.status = talloc_strdup(main_scr,
 		_("Welcome to Petitboot"));
-
-	main_scr->pmenu = main_menu_init(main_scr);
 
 	return main_scr;
 }
@@ -1689,7 +1687,6 @@ static void cui_update_sysinfo(struct system_info *sysinfo, void *arg)
 
 void cui_update_language(struct cui *cui, const char *lang)
 {
-	bool repost_menu;
 	char *cur_lang;
 
 	cur_lang = setlocale(LC_ALL, NULL);
@@ -1698,22 +1695,7 @@ void cui_update_language(struct cui *cui, const char *lang)
 
 	setlocale(LC_ALL, lang);
 
-	/* we'll need to update the menu: drop all items and repopulate */
-	repost_menu = cui->current_scr == cui->main_scr ||
-		cui->current_scr == cui->plugin_scr;
-	if (repost_menu)
-		nc_scr_unpost(cui->current_scr);
-
-	talloc_free(cui->main_scr->pmenu);
-	cui->main_scr = main_scr_init(cui);
-
-	talloc_free(cui->plugin_scr->pmenu);
-	cui->plugin_scr = plugin_scr_init(cui);
-
-	if (repost_menu) {
-		cui->current_scr = cui->main_scr;
-		nc_scr_post(cui->current_scr);
-	}
+	cui->platform.screen_update(cui);
 
 	discover_client_enumerate(cui->client);
 }
