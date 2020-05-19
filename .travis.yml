@@ -23,7 +23,7 @@ before_script:
 install:
  - "sudo pip install sphinx"
 script:
- - ./docker/build-pb --check --verbose --configure-opts "--enable-platform-arm64 --enable-platform-powerpc"
+ - ./docker/build-pb --check --verbose
  - if [ "$DOCS" == "true" ]; then cd doc/; make html; fi
 
 deploy:
