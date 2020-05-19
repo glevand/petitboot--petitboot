@@ -26,7 +26,7 @@ static __attribute__((unused)) struct arm64_ui *arm64_from_cui(
 	struct arm64_ui *ui;
 
 	assert(cui->sig == pb_cui_sig);
-	ui = cui->platform_info;
+	ui = cui->platform.data;
 	assert(ui->sig == arm64_ui_sig);
 	return ui;
 }
@@ -42,10 +42,34 @@ static __attribute__((unused)) struct arm64_ui *arm64_from_item(
 	cui = cui_from_item(item);
 	assert(cui->sig == pb_cui_sig);
 
-	ui = cui->platform_info;
+	ui = cui->platform.data;
 	assert(ui->cui->sig == pb_cui_sig);
 
 	return ui;
+}
+
+static int arm64_screen_update(struct cui *cui)
+{
+	bool repost_menu;
+
+	/* we'll need to update the menu: drop all items and repopulate */
+	repost_menu = cui->current_scr == cui->main_scr ||
+		cui->current_scr == cui->plugin_scr;
+	if (repost_menu)
+		nc_scr_unpost(cui->current_scr);
+
+	talloc_free(cui->main_scr->pmenu);
+	cui->main_scr = main_scr_init(cui);
+
+	talloc_free(cui->plugin_scr->pmenu);
+	cui->plugin_scr = plugin_scr_init(cui);
+
+	if (repost_menu) {
+		cui->current_scr = cui->main_scr;
+		nc_scr_post(cui->current_scr);
+	}
+
+	return 0;
 }
 
 int platform_init(struct cui *cui)
@@ -58,7 +82,9 @@ int platform_init(struct cui *cui)
 
 	ui->sig = arm64_ui_sig;
 	ui->cui = cui;
-	cui->platform_info = ui;
+
+	cui->platform.data = ui;
+	cui->platform.screen_update = arm64_screen_update;
 
 	ui->cui->main_scr = main_scr_init(ui->cui);
 	

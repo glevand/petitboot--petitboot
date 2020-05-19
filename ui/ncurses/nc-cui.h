@@ -41,6 +41,7 @@ struct cui_opt_data {
 
 struct cui_platform {
 	void *data;
+	int (*screen_update)(struct cui *cui);
 };
 
 /**
@@ -87,8 +88,10 @@ struct cui {
 
 struct cui *cui_init(int timeout);
 struct nc_scr *cui_set_current(struct cui *cui, struct nc_scr *scr);
+
 int cui_run(struct cui *cui);
 int cui_process_key(struct cui *cui);
+struct pmenu *main_menu_init(struct nc_scr *main_scr);
 
 void cui_item_edit(struct pmenu_item *item);
 void cui_item_new(struct pmenu *menu);
