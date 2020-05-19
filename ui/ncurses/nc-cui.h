@@ -39,6 +39,10 @@ struct cui_opt_data {
 	uint32_t opt_hash;
 };
 
+struct cui_platform {
+	void *data;
+};
+
 /**
  * struct cui - Data structure defining a cui state machine.
  * @c_sig: Signature for callback type checking, should be cui_sig.
@@ -75,7 +79,7 @@ struct cui {
 	struct subset_screen *subset_screen;
 	struct statuslog_screen *statuslog_screen;
 	struct auth_screen *auth_screen;
-	void *platform_info;
+	struct cui_platform platform;
 	unsigned int default_item;
 	int (*on_boot)(struct cui *cui, struct cui_opt_data *cod);
 	bool preboot_mode;
