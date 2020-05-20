@@ -257,20 +257,36 @@ AS_IF(
 	]
 )
 
-# platform choice
+# platform choice start
+
 AC_ARG_ENABLE(
-	[platform-all],
+	[platform-arm64],
 	[AS_HELP_STRING(
-		[--enable-platform-all],
-		[build support for all platforms [default=yes]]
+		[--enable-platform-arm64],
+		[build support for arm64 platforms [default=yes]]
 	)],
 	[],
-	[enable_platform_all="yes"]
-
+	[enable_platform_arm64="yes"],
 )
-AS_IF(
-	[test "x$enable_platform_all" = "xyes"],
-	[enable_platform_arm64="yes"; enable_platform_powerpc="yes"; enable_platform_ps3="yes"]
+
+AC_ARG_ENABLE(
+	[platform-powerpc],
+	[AS_HELP_STRING(
+		[--enable-platform-powerpc],
+		[build support for powerpc platforms [default=yes]]
+	)],
+	[],
+	[enable_platform_powerpc="yes"],
+)
+
+AC_ARG_ENABLE(
+	[platform-ps3],
+	[AS_HELP_STRING(
+		[--enable-platform-ps3],
+		[build support for ps3 platforms [default=yes]]
+	)],
+	[],
+	[enable_platform_ps3="yes"],
 )
 
 AC_ARG_ENABLE(
@@ -280,41 +296,17 @@ AC_ARG_ENABLE(
 		[auto detect platform support to build [default=no]]
 	)],
 	[],
-	[]
-)
-AS_IF(
-	[test "x$enable_platform_auto" = "xyes"],
 	[AS_CASE([$host],
-		[aarch64-*-*],   [enable_platform_arm64="yes"],
-		[powerpc*-*-*],  [enable_platform_powerpc="yes"],
+		[aarch64-*-*],   [enable_platform_powerpc="no"; enable_platform_ps3="no"],
+		[powerpc*-*-*],  [enable_platform_arm64="no"; enable_platform_ps3="no"],
 	)]
 )
 
-AC_ARG_ENABLE(
-	[platform-arm64],
-	[AS_HELP_STRING(
-		[--enable-platform-arm64],
-		[build support for arm64 platforms [default=no]]
-	)]
-)
 AM_CONDITIONAL([PLATFORM_ARM64], [test "x$enable_platform_arm64" = "xyes"])
-
-AC_ARG_ENABLE(
-	[platform-powerpc],
-	[AS_HELP_STRING(
-		[--enable-platform-powerpc],
-		[build support for powerpc platforms [default=no]]
-	)]
-)
 AM_CONDITIONAL([PLATFORM_POWERPC], [test "x$enable_platform_powerpc" = "xyes"])
-
-AC_ARG_ENABLE(
-	[platform-ps3],
-	[AS_HELP_STRING(
-		[--enable-platform-ps3],
-		[build support for the PS3 game console [default=no]]
-	)])
 AM_CONDITIONAL([PLATFORM_PS3], [test "x$enable_platform_ps3" = "xyes"])
+
+# platform choice end
 
 AC_ARG_ENABLE(
 	[debug],
