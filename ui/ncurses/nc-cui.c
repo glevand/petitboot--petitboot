@@ -1685,19 +1685,27 @@ static void cui_update_sysinfo(struct system_info *sysinfo, void *arg)
 	cui_update_mm_title(cui);
 }
 
+void cui_scr_update(struct cui *cui)
+{
+	nc_scr_unpost(cui->current_scr);
+	cui->current_scr->update(cui);
+	nc_scr_post(cui->current_scr);
+}
+
 void cui_update_language(struct cui *cui, const char *lang)
 {
 	char *cur_lang;
 
 	cur_lang = setlocale(LC_ALL, NULL);
+
 	if (cur_lang && !strcmp(cur_lang, lang))
 		return;
 
 	setlocale(LC_ALL, lang);
 
-	cui->platform.screen_update(cui);
+	cui_scr_update(cui);
 
-	discover_client_enumerate(cui->client);
+	discover_client_enumerate(cui->client); ...what does this do???
 }
 
 static void cui_update_config(struct config *config, void *arg)

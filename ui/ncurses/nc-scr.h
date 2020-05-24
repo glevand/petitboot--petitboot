@@ -165,6 +165,7 @@ struct nc_scr {
 	void (*process_key)(struct nc_scr *scr, int key);
 	int (*post)(struct nc_scr *scr);
 	int (*unpost)(struct nc_scr *scr);
+	int (*update)(struct nc_scr *scr);
 	void (*resize)(struct nc_scr *scr);
 };
 
@@ -173,6 +174,7 @@ struct nc_scr *nc_scr_init(void *container, enum pb_nc_sig sig,
 	void (*process_key)(struct nc_scr *scr, int key),
 	int (*post)(struct nc_scr *scr),
 	int (*unpost)(struct nc_scr *scr),
+	int (*update)(struct nc_scr *scr),
 	void (*resize)(struct nc_scr *scr));
 
 void nc_scr_status_free(struct nc_scr *scr);

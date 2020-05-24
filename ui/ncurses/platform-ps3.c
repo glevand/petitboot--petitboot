@@ -351,11 +351,17 @@ fail_setup:
 	return NULL;
 }
 
+static int ps3_svm_update(struct nc_scr *scr)
+{
+	(void)scr;
+	return 0;
+}
+
 static void ps3_setup_svm(struct ps3_ui *ps3)
 {
-
 	ps3->svm_scr = nc_scr_init(ps3, ps3_svm_scr_sig, ps3->cui, 0,
-		pmenu_process_key, pmenu_post, pmenu_unpost, pmenu_resize);
+		pmenu_process_key, pmenu_post, pmenu_unpost, ps3_svm_update,
+		pmenu_resize);
 
 	ps3->svm_scr->frame.ltitle = talloc_asprintf(ps3->svm_scr,
 		"Select PS3 Video Mode");
@@ -374,28 +380,34 @@ static void ps3_setup_svm(struct ps3_ui *ps3)
 	//cui_add_platform_menu(cui, main_menu, main_menu_item);
 }
 
-static int ps3_screen_update(struct cui *cui)
+static int ps3_main_update(struct nc_scr *main)
 {
-	bool repost_menu;
+	struct cui *cui = main->cui;
 
-	/* we'll need to update the menu: drop all items and repopulate */
-	repost_menu = cui->current_scr == cui->main_scr ||
-		cui->current_scr == cui->plugin_scr;
-	if (repost_menu)
-		nc_scr_unpost(cui->current_scr);
-
-	talloc_free(cui->main_scr->pmenu);
-	cui->main_scr = main_scr_init(cui);
-
-	talloc_free(cui->plugin_scr->pmenu);
-	cui->plugin_scr = plugin_scr_init(cui);
-
-	if (repost_menu) {
-		cui->current_scr = cui->main_scr;
-		nc_scr_post(cui->current_scr);
+	if (main) {
+		talloc_free(main);
 	}
 
+	main = ps3_main_init(cui);
+
 	return 0;
+}
+
+static struct nc_scr *ps3_main_init(struct cui *cui)
+{
+	struct nc_scr *main;
+
+	main = talloc_zero(cui, struct nc_scr);
+
+	if (!main) {
+		exit(EXIT_FAILURE);
+	}
+
+	main->update = ps3_main_update;
+	
+	ps3_main_update(NULL);
+
+	return main;
 }
 
 int platform_init(struct cui *cui)
@@ -410,7 +422,6 @@ int platform_init(struct cui *cui)
 	ps3->cui = cui;
 
 	cui->platform.data = ps3;
-	cui->platform.screen_update = ps3_screen_update;
 
 	ps3->cui->main_scr = main_scr_init(ps3->cui);
 

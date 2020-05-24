@@ -41,7 +41,7 @@ struct cui_opt_data {
 
 struct cui_platform {
 	void *data;
-	int (*screen_update)(struct cui *cui);
+	//int (*screen_update)(struct cui *cui);
 };
 
 /**
@@ -55,22 +55,11 @@ struct cui_platform {
  * menu.
  */
 
-struct cui {
-	enum pb_nc_sig sig;
-	bool has_input;
-	struct autoboot_option *autoboot_opt;
-	sig_atomic_t abort;
-	sig_atomic_t resize;
-	struct nc_scr *current_scr;
+#if 0
 	struct nc_scr *main_scr;
 	struct nc_scr *plugin_scr;
 	unsigned int n_plugins;
-	struct waitset *waitset;
-	struct discover_client *client;
-	struct system_info *sysinfo;
-	struct statuslog *statuslog;
 	struct sysinfo_screen *sysinfo_screen;
-	struct config *config;
 	struct config_screen *config_screen;
 	struct add_url_screen *add_url_screen;
 	struct plugin_screen *plugin_screen;
@@ -80,6 +69,20 @@ struct cui {
 	struct subset_screen *subset_screen;
 	struct statuslog_screen *statuslog_screen;
 	struct auth_screen *auth_screen;
+#endif
+
+struct cui {
+	enum pb_nc_sig sig;
+	bool has_input;
+	struct autoboot_option *autoboot_opt;
+	sig_atomic_t abort;
+	sig_atomic_t resize;
+	struct nc_scr *current_scr;
+	struct waitset *waitset;
+	struct discover_client *client;
+	struct system_info *sysinfo;
+	struct statuslog *statuslog;
+	struct config *config;
 	struct cui_platform platform;
 	unsigned int default_item;
 	int (*on_boot)(struct cui *cui, struct cui_opt_data *cod);
