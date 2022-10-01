@@ -9,7 +9,7 @@
 #include <assert.h>
 //#include <ctype.h>
 #include <errno.h>
-//#include <stdlib.h>
+#include <stdlib.h>
 //#include <locale.h>
 #include <string.h>
 //#include <sys/ioctl.h>
@@ -359,9 +359,9 @@ static int ps3_svm_update(struct nc_scr *scr)
 
 static void ps3_setup_svm(struct ps3_ui *ps3)
 {
-	ps3->svm_scr = nc_scr_init(ps3, ps3_svm_scr_sig, ps3->cui, 0,
-		pmenu_process_key, pmenu_post, pmenu_unpost, ps3_svm_update,
-		pmenu_resize);
+	ps3->svm_scr = nc_scr_init(ps3, (enum pb_nc_sig)ps3_svm_scr_sig,
+		ps3->cui, 0, pmenu_process_key, pmenu_post, pmenu_unpost,
+		ps3_svm_update, pmenu_resize);
 
 	ps3->svm_scr->frame.ltitle = talloc_asprintf(ps3->svm_scr,
 		"Select PS3 Video Mode");
@@ -379,6 +379,8 @@ static void ps3_setup_svm(struct ps3_ui *ps3)
 	//main_menu_item->on_execute = ps3_mm_to_svm_cb;
 	//cui_add_platform_menu(cui, main_menu, main_menu_item);
 }
+
+static struct nc_scr *ps3_main_init(struct cui *cui);
 
 static int ps3_main_update(struct nc_scr *main)
 {
