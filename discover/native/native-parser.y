@@ -1,9 +1,9 @@
 
-%pure-parser
+%define api.pure
 %lex-param { nscan_t scanner }
 %parse-param { struct native_parser *parser }
 %parse-param { void *scanner }
-%error-verbose
+%define parse.error verbose
 
 %define api.prefix {n}
 %{
