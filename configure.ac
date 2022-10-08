@@ -37,7 +37,8 @@ AC_PROG_INSTALL
 
 AM_INIT_AUTOMAKE
 AM_GNU_GETTEXT([external])
-AM_GNU_GETTEXT_VERSION(0.18.1)
+AM_GNU_GETTEXT_VERSION(0.19)
+
 if test "$USE_NLS" = "yes" -a -z "$($MSGFMT --version)"; then
 	AC_MSG_ERROR([[Please install gettext]])
 fi
