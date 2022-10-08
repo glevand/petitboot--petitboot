@@ -73,3 +73,12 @@ include man/Makefile.am
 
 include utils/Makefile.am
 
+.PHONY: help
+
+help:
+	@echo "Targets:"
+	@echo "  make install"
+	@echo "  make dist"
+	@echo "  make distcheck"
+	@echo "  make distclean"
+	@echo "  make maintainer-clean"
