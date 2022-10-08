@@ -25,7 +25,7 @@ AC_PREFIX_DEFAULT([/usr/local])
 AS_IF([test "x$CFLAGS" = "x"], [AC_SUBST([CFLAGS], [""])])
 
 AC_PROG_CC
-AC_PROG_LEX
+AC_PROG_LEX(yywrap)
 if test -z "$($LEX --version)"; then
 	AC_MSG_ERROR([[Please install flex/lex]])
 fi
@@ -36,7 +36,6 @@ fi
 AC_PROG_INSTALL
 
 AM_INIT_AUTOMAKE
-AC_GNU_SOURCE
 AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION(0.18.1)
 if test "$USE_NLS" = "yes" -a -z "$($MSGFMT --version)"; then
@@ -121,19 +120,21 @@ AC_CHECK_HEADERS([varargs.h])
 
 dnl Checking for va_copy availability
 AC_MSG_CHECKING([for va_copy])
-AC_TRY_LINK([#include <stdarg.h>
-va_list ap1,ap2;], [va_copy(ap1,ap2);],
-have_va_copy=yes,
-have_va_copy=no)
+
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdarg.h>
+va_list ap1,ap2;]], [[va_copy(ap1,ap2);]])],
+[have_va_copy=yes],
+[have_va_copy=no])
+
 AC_MSG_RESULT($have_va_copy)
 if test x"$have_va_copy" = x"yes"; then
     AC_DEFINE(HAVE_VA_COPY,1,[Whether va_copy() is available])
 else
     AC_MSG_CHECKING([for __va_copy])
-    AC_TRY_LINK([#include <stdarg.h>
-    va_list ap1,ap2;], [__va_copy(ap1,ap2);],
-    have___va_copy=yes,
-    have___va_copy=no)
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdarg.h>
+    va_list ap1,ap2;]], [[__va_copy(ap1,ap2);]])],
+    [have___va_copy=yes],
+    [have___va_copy=no])
     AC_MSG_RESULT($have___va_copy)
     if test x"$have___va_copy" = x"yes"; then
         AC_DEFINE(HAVE___VA_COPY,1,[Whether __va_copy() is available])
