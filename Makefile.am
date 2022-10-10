@@ -63,10 +63,6 @@ if WITH_NCURSES
 include ui/ncurses/Makefile.am
 endif
 
-if WITH_TWIN
-include ui/twin/Makefile.am
-endif
-
 include ui/test/Makefile.am
 
 include man/Makefile.am

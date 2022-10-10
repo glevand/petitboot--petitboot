@@ -29,22 +29,3 @@ ui_common_libpbui_la_SOURCES += \
 	ui/common/ps3.c \
 	ui/common/ps3.h
 endif
-
-artwork =
-
-if WITH_TWIN
-artwork += \
-	$(srcdir)/ui/common/artwork/background.jpg \
-	$(srcdir)/ui/common/artwork/COPYING-tux \
-	$(srcdir)/ui/common/artwork/tux.png \
-	$(srcdir)/ui/common/artwork/oxygen/applications-system.png \
-	$(srcdir)/ui/common/artwork/oxygen/configure.png \
-	$(srcdir)/ui/common/artwork/oxygen/COPYING-oxygen \
-	$(srcdir)/ui/common/artwork/oxygen/drive-harddisk.png \
-	$(srcdir)/ui/common/artwork/oxygen/network-wired.png \
-	$(srcdir)/ui/common/artwork/oxygen/utilities-terminal.png
-endif
-
-artworkdir = $(pkgdatadir)/artwork/
-dist_artwork_DATA = $(artwork)
-
