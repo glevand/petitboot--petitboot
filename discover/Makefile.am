@@ -109,4 +109,4 @@ discover_platform_ro_CPPFLAGS = \
 	$(AM_CPPFLAGS)
 
 discover_platform_ro_LINK = \
-	$(LD) -r -o $@
+	$(LD) $(LDFLAGS) -r -o $@
