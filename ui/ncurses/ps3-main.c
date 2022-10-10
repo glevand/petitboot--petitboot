@@ -600,19 +600,8 @@ int main(int argc, char *argv[])
 		return EXIT_SUCCESS;
 	}
 
-	if (strcmp(opts.log_file, "-")) {
-		FILE *log = fopen(opts.log_file, "a");
-
-		assert(log);
-		pb_log_set_stream(log);
-	} else
-		pb_log_set_stream(stderr);
-
-#if defined(DEBUG)
-	pb_log_always_flush(1);
-#endif
-
-	pb_log("--- pb-cui ---\n");
+	pb_log_open(opts.log_file, opts.verbose == opt_yes,
+		"--- PS3 petitboot-nc ---");
 
 	sa.sa_handler = sig_handler;
 	result = sigaction(SIGALRM, &sa, NULL);
