@@ -425,60 +425,72 @@ static struct pmenu *ps3_svm_init(struct ps3_cui *ps3_cui)
 	m = pmenu_init(ps3_cui->cui, 12, ps3_svm_to_mm_helper);
 
 	if (!m) {
-		pb_log_fn("failed\n");
+		pb_debug_fl("failed\n");
 		return NULL;
 	}
 
-	m->hot_key = ps3_hot_key;
-	m->scr.frame.title = talloc_strdup(m, "Select PS3 Video Mode");
+	m->scr.frame.ltitle = talloc_strdup(m, "Select PS3 Video Mode");
+	m->scr.frame.rtitle = NULL;
 	m->scr.frame.help = talloc_strdup(m, "Enter=accept, x=exit");
 
-	i = pmenu_item_init(m, 0, "auto detect");
+	i = pmenu_item_create(m, _("auto detect"));
 	i->on_execute = ps3_svm_cb;
 	i->data = (void *)0;
+	pmenu_item_insert(m, i, 0);
 
-	i = pmenu_item_init(m, 1, "480i    (576 x 384)");
+	i = pmenu_item_create(m, "480i    (576 x 384)");
 	i->on_execute = ps3_svm_cb;
 	i->data = (void *)1;
+	pmenu_item_insert(m, i, 1);
 
-	i = pmenu_item_init(m, 2, "480p    (576 x 384)");
+	i = pmenu_item_create(m, "480p    (576 x 384)");
 	i->on_execute = ps3_svm_cb;
 	i->data = (void *)2;
+	pmenu_item_insert(m, i, 2);
 
-	i = pmenu_item_init(m, 3, "576i    (576 x 460)");
+	i = pmenu_item_create(m, "576i    (576 x 460)");
 	i->on_execute = ps3_svm_cb;
 	i->data = (void *)6;
+	pmenu_item_insert(m, i, 3);
 
-	i = pmenu_item_init(m, 4, "576p    (576 x 460)");
+	i = pmenu_item_create(m, "576p    (576 x 460)");
 	i->on_execute = ps3_svm_cb;
 	i->data = (void *)7;
+	pmenu_item_insert(m, i, 4);
 
-	i = pmenu_item_init(m, 5, "720p   (1124 x 644)");
+	i = pmenu_item_create(m, "720p   (1124 x 644)");
 	i->on_execute = ps3_svm_cb;
 	i->data = (void *)3;
+	pmenu_item_insert(m, i, 5);
 
-	i = pmenu_item_init(m, 6, "1080i  (1688 x 964)");
+	i = pmenu_item_create(m, "1080i  (1688 x 964)");
 	i->on_execute = ps3_svm_cb;
 	i->data = (void *)4;
+	pmenu_item_insert(m, i, 6);
 
-	i = pmenu_item_init(m, 7, "1080p  (1688 x 964)");
+	i = pmenu_item_create(m, "1080p  (1688 x 964)");
 	i->on_execute = ps3_svm_cb;
 	i->data = (void *)5;
+	pmenu_item_insert(m, i, 7);
 
-	i = pmenu_item_init(m, 8, "wxga   (1280 x 768)");
+	i = pmenu_item_create(m, "wxga   (1280 x 768)");
 	i->on_execute = ps3_svm_cb;
 	i->data = (void *)11;
+	pmenu_item_insert(m, i, 8);
 
-	i = pmenu_item_init(m, 9, "sxga   (1280 x 1024)");
+	i = pmenu_item_create(m, "sxga   (1280 x 1024)");
 	i->on_execute = ps3_svm_cb;
 	i->data = (void *)12;
+	pmenu_item_insert(m, i, 9);
 
-	i = pmenu_item_init(m, 10, "wuxga  (1920 x 1200)");
+	i = pmenu_item_create(m, "wuxga  (1920 x 1200)");
 	i->on_execute = ps3_svm_cb;
 	i->data = (void *)13;
+	pmenu_item_insert(m, i, 10);
 
-	i = pmenu_item_init(m, 11, "Return");
+	i = pmenu_item_create(m, _("Return"));
 	i->on_execute = ps3_svm_to_mm_cb;
+	pmenu_item_insert(m, i, 11);
 
 	result = pmenu_setup(m);
 
