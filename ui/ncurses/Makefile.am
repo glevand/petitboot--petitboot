@@ -77,6 +77,6 @@ ui_ncurses_petitboot_nc_LDADD = $(ui_ncurses_common_libs)
 
 ui_ncurses_petitboot_ps3_nc_SOURCES = ui/ncurses/ps3-main.c
 ui_ncurses_petitboot_ps3_nc_LDADD = $(ui_ncurses_common_libs) \
-				    $(libdir)/libps3-utils.so
+				    $(libdir)/libps3-utils.la
 
 EXTRA_DIST += ui/ncurses/ui-guidelines.text
