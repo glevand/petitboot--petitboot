@@ -356,56 +356,48 @@ static int ps3_hot_key(struct pmenu __attribute__((unused)) *menu,
  * ps3_mm_init - Setup the main menu instance.
  */
 
-static struct pmenu *ps3_mm_init(struct ps3_cui *ps3_cui)
+static struct pmenu *ps3_mm_init(struct cui *cui)
 {
 	int result;
 	struct pmenu *m;
 	struct pmenu_item *i;
 	static const char *const bgo[] = {"/usr/sbin/ps3-boot-game-os", NULL};
 
-	m = pmenu_init(ps3_cui->cui, 3, cui_on_exit);
+	m = pmenu_init(cui, 3, cui_on_exit);
 
 	if (!m) {
-		pb_log_fn("failed\n");
+		pb_debug_fl("failed\n");
 		return NULL;
 	}
-
-	m->n_hot_keys = 2;
-	m->hot_keys = talloc_array(m, hot_key_fn *, m->n_hot_keys);
-	if (!m->hot_keys) {
-		pb_log_fn("failed to allocate hot_keys\n");
-		talloc_free(m);
-		return NULL;
-	}
-	m->hot_keys[0] = ps3_hot_key;
-	m->hot_keys[1] = pmenu_main_hot_keys;
-	m->on_new = cui_item_new;
 
 #if defined(DEBUG)
-	m->scr.frame.title = talloc_strdup(m,
+	m->scr.frame.ltitle = talloc_strdup(m,
 		"Petitboot PS3 (" PACKAGE_VERSION ")");
 #else
-	m->scr.frame.title = talloc_strdup(m, "Petitboot PS3");
+	m->scr.frame.ltitle = talloc_strdup(m, "Petitboot PS3");
 #endif
+	m->scr.frame.rtitle = NULL;
 	m->scr.frame.help = talloc_strdup(m,
 		"Enter=accept, e=edit, o=open, x=exit");
 	m->scr.frame.status = talloc_strdup(m, "Welcome to Petitboot");
 
-	i = pmenu_item_init(m, 0, "Boot GameOS");
-	i->on_execute = cui_run_cmd;
+	i = pmenu_item_create(m, _("Boot GameOS"));
+	i->on_execute = cui_run_cmd_from_item;
 	i->data = (void *)bgo;
+	pmenu_item_insert(m, i, 0);
 
-	i = pmenu_item_init(m, 1, "Set Video Mode");
+	i = pmenu_item_create(m, _("Set Video Mode"));
 	i->on_execute = ps3_mm_to_svm_cb;
+	pmenu_item_insert(m, i, 1);
 
-	i = pmenu_item_init(m, 2, "Exit to Shell");
+	i = pmenu_item_create(m, _("Exit to shell"));
 	i->on_execute = pmenu_exit_cb;
+	pmenu_item_insert(m, i, 2);
 
 	result = pmenu_setup(m);
 
 	if (result) {
-		pb_log("%s:%d: pmenu_setup failed: %s\n", __func__, __LINE__,
-			strerror(errno));
+		pb_debug_fl("pmenu_setup failed: %s\n", strerror(errno));
 		goto fail_setup;
 	}
 
@@ -590,18 +582,16 @@ int main(int argc, char *argv[])
 	if (!result && (ps3.values.video_mode != (uint16_t)mode))
 		ps3_set_video_mode(ps3.values.video_mode);
 
-	ps3.cui = cui_init(&ps3, ps3_boot_cb, ps3_sixaxis_map);
+	ps3.cui = cui_init(opts.timeout, &ps3_mm_init);
 
 	if (!ps3.cui)
 		return EXIT_FAILURE;
 
-	ps3.mm = ps3_mm_init(&ps3);
+	ps3.mm = ps3.cui->main;
 	ps3.svm = ps3_svm_init(&ps3);
+	ps3.cui->platform_info = &ps3;
 
-	cui_result = cui_run(ps3.cui, ps3.mm, ps3.values.default_item);
-
-	pmenu_delete(ps3.mm);
-	pmenu_delete(ps3.svm);
+	cui_result = cui_run(ps3.cui);
 
 	if (ps3.dirty_values)
 		ps3_flash_set_values(&ps3.values);
