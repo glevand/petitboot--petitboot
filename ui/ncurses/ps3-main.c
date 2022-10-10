@@ -140,9 +140,9 @@ static struct ps3_cui *ps3_from_cui(struct cui *cui)
 {
 	struct ps3_cui *ps3;
 
-	assert(cui->c_sig == pb_cui_sig);
+	assert(cui->sig == pb_cui_sig);
 	ps3 = cui->platform_info;
-	assert(ps3->cui->c_sig == pb_cui_sig);
+	assert(ps3->cui->sig == pb_cui_sig);
 	return ps3;
 }
 
@@ -247,7 +247,7 @@ static void ps3_set_mode(struct ps3_cui *ps3, unsigned int mode)
 	result = ps3_set_video_mode(mode);
 
 	if (result)
-		nc_scr_status_printf(ps3->cui->current,
+		nc_scr_status_printf(ps3->cui->current_scr,
 			"Failed: set_video_mode(%u)", mode);
 }
 
@@ -257,7 +257,8 @@ static void ps3_set_mode(struct ps3_cui *ps3, unsigned int mode)
 
 static int ps3_svm_cb(struct pmenu_item *item)
 {
-	ps3_set_mode(ps3_from_item(item), (unsigned int)item->data);
+	ps3_set_mode(ps3_from_item(item),
+		(unsigned int)(unsigned long int)(item->data));
 	return 0;
 }
 
@@ -277,7 +278,7 @@ static int ps3_boot_cb(struct cui *cui, struct cui_opt_data *cod)
 
 	pb_debug("%s: %s\n", __func__, cod->name);
 
-	assert(ps3->cui->current == &ps3->cui->main->scr);
+	assert(ps3->cui->current_scr == &ps3->cui->main->scr);
 
 	/* Save values to flash if needed */
 

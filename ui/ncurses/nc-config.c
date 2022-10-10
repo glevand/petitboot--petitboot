@@ -186,7 +186,7 @@ static void config_screen_process_key(struct nc_scr *scr, int key)
 		cui_show_help(screen->cui, _("System Configuration"),
 				&config_help_text);
 
-	} else if (handled && (screen->cui->current == scr)) {
+	} else if (handled && (screen->cui->current_scr == scr)) {
 		pad_refresh(screen);
 	}
 }
@@ -1325,7 +1325,7 @@ void config_screen_update(struct config_screen *screen,
 		const struct config *config,
 		const struct system_info *sysinfo)
 {
-	if (screen->cui->current != config_screen_scr(screen)) {
+	if (screen->cui->current_scr != config_screen_scr(screen)) {
 		screen->need_update = true;
 		return;
 	}

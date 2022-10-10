@@ -273,7 +273,7 @@ struct auth_screen *auth_screen_init(struct cui *cui,
 	talloc_set_destructor(screen, auth_screen_destroy);
 
 	screen->cui = cui;
-	screen->return_scr = cui->current;
+	screen->return_scr = cui->current_scr;
 	screen->set_password = set_password;
 	screen->dev = dev;
 	screen->callback = callback;

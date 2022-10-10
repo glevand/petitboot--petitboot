@@ -164,7 +164,7 @@ static void plugin_screen_process_key(struct nc_scr *scr, int key)
 		cui_show_help(screen->cui, _("Petitboot Plugin"),
 				&plugin_help_text);
 
-	} else if (handled && (screen->cui->current == scr)) {
+	} else if (handled && (screen->cui->current_scr == scr)) {
 		pad_refresh(screen);
 	}
 }
@@ -235,7 +235,8 @@ static void plugin_run_command(void *arg)
 	if (result)
 		pb_log("Failed to run plugin command %s\n", cmd);
 	else
-		nc_scr_status_printf(screen->cui->current, _("Finished: %s"), cmd);
+		nc_scr_status_printf(screen->cui->current_scr,
+			_("Finished: %s"), cmd);
 
 	plugin_screen_draw(screen, NULL);
 

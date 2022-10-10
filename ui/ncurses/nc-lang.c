@@ -119,7 +119,7 @@ static void lang_screen_process_key(struct nc_scr *scr, int key)
 
 	if (screen->exit) {
 		screen->on_exit(screen->cui);
-	} else if (handled && (screen->cui->current == scr)) {
+	} else if (handled && (screen->cui->current_scr == scr)) {
 		pad_refresh(screen);
 	}
 }
