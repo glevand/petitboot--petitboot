@@ -1836,7 +1836,7 @@ static int cui_server_wait(void *arg)
  * sets up the ncurses menu screen.
  */
 
-struct cui *cui_init(int timeout)
+struct cui *cui_init(int timeout, struct pmenu *(*menu_init_fn)(struct cui *))
 {
 	struct cui *cui;
 	unsigned int i;
@@ -1883,7 +1883,11 @@ struct cui *cui_init(int timeout)
 	talloc_steal(cui, cui->client);
 	cui_start();
 
-	cui->main = main_menu_init(cui);
+	if (menu_init_fn)
+		cui->main = menu_init_fn(cui);
+	else
+		cui->main = main_menu_init(cui);
+
 	if (!cui->main)
 		goto fail_client_init;
 

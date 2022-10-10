@@ -80,7 +80,7 @@ struct cui {
 	bool preboot_mode;
 };
 
-struct cui *cui_init(int timeout);
+struct cui *cui_init(int timeout, struct pmenu *(*menu_init_fn)(struct cui *));
 struct nc_scr *cui_set_current(struct cui *cui, struct nc_scr *scr);
 int cui_run(struct cui *cui);
 int cui_process_key(struct cui *cui);

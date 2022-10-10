@@ -199,7 +199,7 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	cui = cui_init(opts.timeout);
+	cui = cui_init(opts.timeout, NULL);
 	if (!cui)
 		return EXIT_FAILURE;
 
