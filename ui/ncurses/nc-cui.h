@@ -74,7 +74,6 @@ struct cui {
 	struct subset_screen *subset_screen;
 	struct statuslog_screen *statuslog_screen;
 	struct auth_screen *auth_screen;
-	struct pjs *pjs;
 	void *platform_info;
 	unsigned int default_item;
 	int (*on_boot)(struct cui *cui, struct cui_opt_data *cod);
@@ -84,6 +83,8 @@ struct cui {
 struct cui *cui_init(int timeout);
 struct nc_scr *cui_set_current(struct cui *cui, struct nc_scr *scr);
 int cui_run(struct cui *cui);
+int cui_process_key(struct cui *cui);
+
 void cui_item_edit(struct pmenu_item *item);
 void cui_item_new(struct pmenu *menu);
 void cui_show_sysinfo(struct cui *cui);
