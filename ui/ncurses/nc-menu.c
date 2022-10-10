@@ -411,67 +411,86 @@ static void pmenu_process_key(struct nc_scr *scr, int key)
 	struct pmenu_item *item = pmenu_find_selected(menu);
 	unsigned int i;
 
+	pb_debug_fl("key = %d (0x%x)\n", key, key);
+
 	nc_scr_status_free(&menu->scr);
 
 	if (menu->hot_keys)
 		for (i = 0; i < menu->n_hot_keys; i++) {
-			if (menu->hot_keys[i](menu, item, key))
+			if (menu->hot_keys[i](menu, item, key)) {
+				pb_debug_fl("\n");
 				return;
+			}
 		}
 
+	pb_debug_fl("\n");
 	switch (key) {
 	case 27: /* ESC */
 	case 'x':
+		pb_debug_fl("\n");
 		if (menu->on_exit)
 			menu->on_exit(menu);
 		nc_flush_keys();
 		return;
 
 	case KEY_PPAGE:
+		pb_debug_fl("\n");
 		pmenu_move_cursor(menu, REQ_SCR_UPAGE);
 		break;
 	case KEY_NPAGE:
+		pb_debug_fl("\n");
 		pmenu_move_cursor(menu, REQ_SCR_DPAGE);
 		break;
 	case KEY_HOME:
+		pb_debug_fl("\n");
 		pmenu_move_cursor(menu, REQ_FIRST_ITEM);
 		break;
 	case KEY_END:
+		pb_debug_fl("\n");
 		pmenu_move_cursor(menu, REQ_LAST_ITEM);
 		break;
 	case KEY_UP:
+		pb_debug_fl("\n");
 		pmenu_move_cursor(menu, REQ_UP_ITEM);
 		break;
 	case KEY_BTAB:
+		pb_debug_fl("\n");
 		pmenu_move_cursor(menu, REQ_PREV_ITEM);
 		break;
 	case KEY_DOWN:
+		pb_debug_fl("\n");
 		pmenu_move_cursor(menu, REQ_DOWN_ITEM);
 		break;
 	case '\t':
+		pb_debug_fl("\n");
 		pmenu_move_cursor(menu, REQ_NEXT_ITEM);
 		break;
 	case 'e':
+		pb_debug_fl("\n");
 		if (item->on_edit)
 			item->on_edit(item);
 		break;
 	case 'n':
+		pb_debug_fl("\n");
 		if (menu->on_new)
 			menu->on_new(menu);
 		break;
 	case ' ':
 	case '\n':
 	case '\r':
+		pb_debug_fl("\n");
 		if (item->on_execute)
 			item->on_execute(item);
 		break;
 	case KEY_F(1):
 	case 'h':
+		pb_debug_fl("\n");
 		if (menu->help_text)
 			cui_show_help(cui_from_arg(scr->ui_ctx),
 					menu->help_title, menu->help_text);
 		break;
 	default:
+		pb_debug_fl("\n");
 		menu_driver(menu->ncm, key);
 		break;
 	}
