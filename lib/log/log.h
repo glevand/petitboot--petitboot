@@ -29,4 +29,7 @@ void pb_log_set_debug(bool debug);
 bool pb_log_get_debug(void);
 FILE *pb_log_get_stream(void);
 
+void pb_log_open(const char *log_file_name, bool vebose, const char *greeting);
+void pb_log_close(const char *signoff);
+
 #endif /* _LOG_H */
