@@ -123,32 +123,6 @@ static int opts_parse(struct opts *opts, int argc, char *argv[])
 	return 0;
 }
 
-static char *default_log_filename(void)
-{
-	const char *base = "/var/log/petitboot/petitboot-nc";
-	static char name[PATH_MAX];
-	char *tty;
-	int i;
-
-	tty = ttyname(STDIN_FILENO);
-
-	/* strip /dev/ */
-	if (tty && !strncmp(tty, "/dev/", 5))
-		tty += 5;
-
-	/* change slashes to hyphens */
-	for (i = 0; tty && tty[i]; i++)
-		if (tty[i] == '/')
-			tty[i] = '-';
-
-	if (!tty || !*tty)
-		tty = "unknown";
-
-	snprintf(name, sizeof(name), "%s.%s.log", base, tty);
-
-	return name;
-}
-
 static struct cui *cui;
 
 /*
@@ -185,11 +159,9 @@ static void sig_handler(int signum)
 int main(int argc, char *argv[])
 {
 	static struct sigaction sa;
-	const char *log_filename;
 	int result;
 	int cui_result;
 	struct opts opts;
-	FILE *log;
 
 	result = opts_parse(&opts, argc, argv);
 
@@ -212,25 +184,8 @@ int main(int argc, char *argv[])
 		return EXIT_SUCCESS;
 	}
 
-	if (opts.log_file)
-		log_filename = opts.log_file;
-	else
-		log_filename = default_log_filename();
-
-	log = stderr;
-	if (strcmp(log_filename, "-")) {
-		log = fopen(log_filename, "a");
-
-		if (!log)
-			log = fopen("/dev/null", "a");
-	}
-
-	pb_log_init(log);
-
-	if (opts.verbose == opt_yes)
-		pb_log_set_debug(true);
-
-	pb_log("--- petitboot-nc ---\n");
+	pb_log_open(opts.log_file, opts.verbose == opt_yes,
+		"--- petitboot-nc ---");
 
 	sa.sa_handler = sig_handler;
 	result = sigaction(SIGALRM, &sa, NULL);
