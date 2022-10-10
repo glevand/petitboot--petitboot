@@ -1,0 +1,22 @@
+{
+	"name": "petitboot",
+
+	"files": [ {
+		"directory": ".",
+		"filters": ["*.c", "*.h", "*.sh", "bootstrap", "Makefile.am", "configure.ac"],
+		"recursive": 1
+	} ],
+
+	"build": {
+		"directory": "/home/geoff/projects/builds/native/petitboot",
+		"default_target": "build",
+		"clean_target": "clean",
+		"targets":[
+			{"name":"build", "build_cmd":"make"},
+			{"name":"clean", "build_cmd":"make clean"},
+			{"name":"configure all", "build_cmd":"rm -rf /home/geoff/projects/builds/native/petitboot/*; rm -rf /home/geoff/projects/builds/native/petitboot/.*; (cd /home/geoff/projects/bootloader/git/petitboot--petitboot && ./bootstrap) && /home/geoff/projects/bootloader/git/petitboot--petitboot/configure CPPFLAGS='-I/home/geoff/projects/builds/native/install/include' LDFLAGS='-L/home/geoff/projects/builds/native/install/lib' --prefix=/home/geoff/projects/builds/native/install --enable-platform-auto=no --disable-nls --enable-debug --without-ncursesw --without-signed-boot"},
+			{"name":"configure ps3", "build_cmd":"rm -rf /home/geoff/projects/builds/native/petitboot/*; rm -rf /home/geoff/projects/builds/native/petitboot/.*; (cd /home/geoff/projects/bootloader/git/petitboot--petitboot && ./bootstrap) && /home/geoff/projects/bootloader/git/petitboot--petitboot/configure CPPFLAGS='-I/home/geoff/projects/builds/native/install/include' LDFLAGS='-L/home/geoff/projects/builds/native/install/lib' --prefix=/home/geoff/projects/builds/native/install --enable-platform-auto=no --enable-platform-ps3 --disable-nls --enable-debug --without-ncursesw --without-signed-boot"},
+			{"name":"configure powerpc", "build_cmd":"rm -rf /home/geoff/projects/builds/native/petitboot/*; rm -rf /home/geoff/projects/builds/native/petitboot/.*; (cd /home/geoff/projects/bootloader/git/petitboot--petitboot && ./bootstrap) && /home/geoff/projects/bootloader/git/petitboot--petitboot/configure CPPFLAGS='-I/home/geoff/projects/builds/native/install/include' LDFLAGS='-L/home/geoff/projects/builds/native/install/lib' --prefix=/home/geoff/projects/builds/native/install --enable-platform-auto=no --enable-platform-powerpc --disable-nls --enable-debug --without-ncursesw --without-signed-boot"}
+		]
+	}
+}
