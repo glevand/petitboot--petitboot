@@ -171,7 +171,8 @@ int read_file(void *ctx, const char *filename, char **bufp, int *lenp)
 
 	close(fd);
 	*bufp = buf;
-	*lenp = len;
+	if (lenp)
+		*lenp = len;
 	return 0;
 
 err_free:
