@@ -42,6 +42,7 @@
 #include "ui/common/discover-client.h"
 #include "ui/common/ps3.h"
 #include "nc-cui.h"
+#include <i18n/i18n.h>
 
 static void print_version(void)
 {
@@ -52,8 +53,8 @@ static void print_usage(void)
 {
 	print_version();
 	printf(
-"Usage: pb-cui [-h, --help] [-l, --log log-file] [-r, --reset-defaults]\n"
-"              [-t, --timeout] [-V, --version]\n");
+"Usage: pb-cui [-h, --help] [-l, --log log-file] [-t, --timeout]\n"
+"              [-v, --verbose] [-r, --reset-defaults] [-V, --version]\n");
 }
 
 /**
@@ -69,6 +70,8 @@ enum opt_value {opt_undef = 0, opt_yes, opt_no};
 struct opts {
 	enum opt_value show_help;
 	const char *log_file;
+	unsigned long timeout;
+	enum opt_value verbose;
 	enum opt_value reset_defaults;
 	enum opt_value show_version;
 };
@@ -82,14 +85,14 @@ static int opts_parse(struct opts *opts, int argc, char *argv[])
 	static const struct option long_options[] = {
 		{"help",           no_argument,       NULL, 'h'},
 		{"log",            required_argument, NULL, 'l'},
+		{"timeout",        required_argument, NULL, 't'},
+		{"verbose",        no_argument,       NULL, 'v'},
 		{"reset-defaults", no_argument,       NULL, 'r'},
 		{"version",        no_argument,       NULL, 'V'},
-		{ NULL, 0, NULL, 0},
+		{ NULL,            0,                 NULL, 0},
 	};
-	static const char short_options[] = "hl:rV";
-	static const struct opts default_values = {
-		.log_file = "/var/log/petitboot/petitboot-nc.log",
-	};
+	static const char short_options[] = "hl:t:vrV";
+	static const struct opts default_values = {0};
 
 	*opts = default_values;
 
@@ -106,6 +109,12 @@ static int opts_parse(struct opts *opts, int argc, char *argv[])
 			break;
 		case 'l':
 			opts->log_file = optarg;
+			break;
+		case 't':
+			opts->timeout = strtoul(optarg, NULL, 10);
+			break;
+		case 'v':
+			opts->verbose = opt_yes;
 			break;
 		case 'r':
 			opts->reset_defaults = opt_yes;
