@@ -125,17 +125,26 @@ static inline struct cui *cui_from_arg(void *arg)
 {
 	struct cui *cui = (struct cui *)arg;
 
+	pb_debug_fl(">\n");
+	pb_debug_fl("cui       = %p\n", cui);
+	pb_debug_fl("cui->sig  = %u\n", cui->sig);
+
 	assert(cui->sig == pb_cui_sig);
 	return cui;
 }
 
 static inline struct cui *cui_from_pmenu(struct pmenu *menu)
 {
+	pb_debug_fl(">\n");
 	return cui_from_arg(menu->scr.ui_ctx);
 }
 
 static inline struct cui *cui_from_item(struct pmenu_item *item)
 {
+	pb_debug_fl(">\n");
+	pb_debug_fl("item  = %p\n", item);
+	pb_debug_fl("pmenu = %p\n", item->pmenu);
+
 	return cui_from_pmenu(item->pmenu);
 }
 

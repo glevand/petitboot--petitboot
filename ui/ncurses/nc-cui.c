@@ -50,6 +50,8 @@
 #include "nc-auth.h"
 #include "console-codes.h"
 
+bool ui_test = true;
+
 extern const struct help_text main_menu_help_text;
 extern const struct help_text plugin_menu_help_text;
 
@@ -241,6 +243,8 @@ int cui_run_cmd(struct cui *cui, const char **cmd_argv)
 	struct process *process;
 	int result;
 
+	pb_debug_fl("cmd = '%s'\n", cmd_argv[0]);
+
 	process = process_create(cui);
 	if (!process)
 		return -1;
@@ -280,6 +284,8 @@ int cui_run_cmd_from_item(struct pmenu_item *item)
 	struct cui *cui = cui_from_item(item);
 	const char **cmd_argv = item->data;
 
+	pb_debug_fl("data = %p\n", item->data);
+	pb_debug_fl("cmd = '%s'\n", cmd_argv[0]);
 	return cui_run_cmd(cui, cmd_argv);
 }
 
@@ -1854,8 +1860,8 @@ struct cui *cui_init(int timeout, struct pmenu *(*menu_init_fn)(struct cui *))
 
 	process_init(cui, cui->waitset, false);
 
+if (!ui_test) {
 	/* Loop here for scripts that just started the server. */
-
 	for (i = 15; i && timeout; i--) {
 		cui->client = discover_client_init(cui->waitset,
 				&cui_client_ops, cui);
@@ -1878,7 +1884,7 @@ struct cui *cui_init(int timeout, struct pmenu *(*menu_init_fn)(struct cui *))
 			"the petitboot daemon is running.\n"));
 		goto fail_client_init;
 	}
-
+}
 	atexit(cui_atexit);
 	talloc_steal(cui, cui->client);
 	cui_start();
