@@ -260,6 +260,43 @@ static void ps3_set_mode(struct ps3_cui *ps3, unsigned int mode)
 			"Failed: set_video_mode(%u)", mode);
 }
 
+static int ps3_save_flash_values(struct cui *cui, struct cui_opt_data *cod)
+{
+	struct ps3_cui *ps3 = ps3_from_cui(cui);
+	int altered_args;
+	char *orig_args;
+
+	/* Save values to flash if needed */
+
+	if ((cod->opt_hash && cod->opt_hash != cui->default_item)
+		|| ps3->dirty_values) {
+		ps3->values.default_item = cod->opt_hash;
+		ps3_flash_set_values(&ps3->values);
+	}
+
+	/* Add a default kernel video mode. */
+
+	if (!cod->bd->args) {
+		altered_args = 1;
+		orig_args = NULL;
+		cod->bd->args = talloc_asprintf(NULL, "video=ps3fb:mode:%u",
+			(unsigned int)ps3->values.video_mode);
+	} else if (!strstr(cod->bd->args, "video=")) {
+		altered_args = 1;
+		orig_args = cod->bd->args;
+		cod->bd->args = talloc_asprintf(NULL, "%s video=ps3fb:mode:%u",
+			orig_args, (unsigned int)ps3->values.video_mode);
+	} else
+		altered_args = 0;
+
+	if (altered_args) {
+		talloc_free(cod->bd->args);
+		cod->bd->args = orig_args;
+	}
+
+	return 0;
+}
+
 /**
  * ps3_svm_cb - The set video mode callback.
  */
