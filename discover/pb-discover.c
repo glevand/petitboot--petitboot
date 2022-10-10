@@ -127,7 +127,6 @@ int main(int argc, char *argv[])
 	struct waitset *waitset;
 	struct procset *procset;
 	struct opts opts;
-	FILE *log;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -148,21 +147,8 @@ int main(int argc, char *argv[])
 		return EXIT_SUCCESS;
 	}
 
-	log = stderr;
-	if (strcmp(opts.log_file, "-")) {
-		log = fopen(opts.log_file, "a");
-		if (!log) {
-			fprintf(stderr, "can't open log file %s, logging to "
-					"stderr\n", opts.log_file);
-			log = stderr;
-		}
-	}
-	pb_log_init(log);
-
-	if (opts.verbose == opt_yes)
-		pb_log_set_debug(true);
-
-	pb_log("--- pb-discover ---\n");
+	pb_log_open(opts.log_file, opts.verbose == opt_yes,
+		"--- pb-discover ---");
 
 	/* we look for closed sockets when we write, so ignore SIGPIPE */
 	signal(SIGPIPE, SIG_IGN);
@@ -210,10 +196,7 @@ int main(int argc, char *argv[])
 	platform_fini();
 	talloc_free(waitset);
 
-	pb_log("--- end ---\n");
-
-	if (log != stderr)
-		fclose(log);
+	pb_log_close("--- end ---");
 
 	return EXIT_SUCCESS;
 }
